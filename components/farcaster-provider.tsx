@@ -20,7 +20,7 @@ export function FarcasterProvider({ children }: { children: React.ReactNode }) {
 
 // Hook para usar funcionalidades de Farcaster SDK
 export function useFarcasterSDK() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{ displayName?: string; fid?: number } | null>(null)
   const [isConnected, setIsConnected] = useState(false)
 
   useEffect(() => {
