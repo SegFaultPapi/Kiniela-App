@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Analytics } from '@vercel/analytics/next'
+import { FarcasterProvider } from '@/components/farcaster-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'Kiniela - Prediction Markets',
+  description: 'Plataforma de mercados de predicción en Base Network',
+  generator: 'Kiniela App',
 }
 
 export default function RootLayout({
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        {children}
+        <FarcasterProvider>
+          {children}
+        </FarcasterProvider>
         <Analytics />
       </body>
     </html>

@@ -3,9 +3,12 @@
 import { Star, List, User, PlusCircle } from "lucide-react"
 import { MarketCarousel } from "@/components/market-carousel"
 import { TrendingCard } from "@/components/trending-card"
+import { useFarcasterSDK } from "@/components/farcaster-provider"
 import Link from "next/link"
 
 export default function Home() {
+  const { user, isConnected } = useFarcasterSDK()
+
   const soccerMarkets = [
     {
       image: "/placeholder.svg?height=400&width=600",
@@ -357,14 +360,7 @@ export default function Home() {
       <main className="px-6 pt-6">
         <h2 className="text-3xl font-bold text-white mb-6">Featured Markets</h2>
 
-        <TrendingCard
-          image="/placeholder.svg?height=600&width=600"
-          percentage={75}
-          title="Will Trump win Republican nomination?"
-          volume="32.8k"
-          category="Politics"
-          description="Predict whether Donald Trump will secure the Republican Party nomination for the 2024 presidential election. Market resolves based on official GOP nomination results."
-        />
+        <TrendingCard />
 
         {/* Politics Section */}
         <section className="mb-8">
