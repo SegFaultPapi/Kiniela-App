@@ -4,10 +4,17 @@ import { Star, List, User, PlusCircle } from "lucide-react"
 import { MarketCarousel } from "@/components/market-carousel"
 import { TrendingCard } from "@/components/trending-card"
 import { useFarcasterSDK } from "@/components/farcaster-provider"
+import { sdk } from '@farcaster/miniapp-sdk'
+import { useEffect } from 'react'
 import Link from "next/link"
 
 export default function Home() {
   const { user, isConnected } = useFarcasterSDK()
+
+  // Ensure ready() is called as soon as possible
+  useEffect(() => {
+    sdk.actions.ready()
+  }, [])
 
   const soccerMarkets = [
     {
