@@ -25,3 +25,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Foundry - Security & Build artifacts
+contracts/broadcast/
+contracts/cache/
+contracts/out/
+contracts/.env
