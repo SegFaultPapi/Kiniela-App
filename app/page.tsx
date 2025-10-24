@@ -3,13 +3,12 @@
 import { Star, List, User, PlusCircle } from "lucide-react"
 import { MarketCarousel } from "@/components/market-carousel"
 import { TrendingCard } from "@/components/trending-card"
-import { useFarcasterSDK } from "@/components/farcaster-provider"
+import { WalletConnection } from "@/components/wallet-connection"
 import { sdk } from '@farcaster/miniapp-sdk'
 import { useEffect } from 'react'
 import Link from "next/link"
 
 export default function Home() {
-  const { user, isConnected } = useFarcasterSDK()
 
   // Ensure ready() is called as soon as possible
   useEffect(() => {
@@ -355,12 +354,7 @@ export default function Home() {
       <header className="flex items-center justify-between px-6 py-2 border-b border-white/10">
         <div className="w-10" />
         <h1 className="text-lg font-bold text-white">Kiniela</h1>
-        <div className="relative">
-          <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center">
-            <div className="w-5 h-5 rounded-full bg-white" />
-          </div>
-          <div className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full bg-green-500 border-2 border-[#1a2332]" />
-        </div>
+        <WalletConnection />
       </header>
 
       {/* Main Content */}
