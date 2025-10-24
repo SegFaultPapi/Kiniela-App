@@ -78,3 +78,4 @@ CREATE POLICY "Users can create own positions" ON positions FOR INSERT WITH CHEC
 CREATE POLICY "Transactions are readable by owner" ON transactions FOR SELECT USING (true);
 CREATE POLICY "Users can create own transactions" ON transactions FOR INSERT WITH CHECK (true);
 
+

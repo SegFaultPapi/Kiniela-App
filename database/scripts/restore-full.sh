@@ -27,3 +27,4 @@ echo "pg_restore \"postgresql://postgres:[password]@db.icmoifjssawaymkqkxvn.supa
 echo "✅ Script de restore preparado"
 echo "⚠️  ADVERTENCIA: Este proceso reemplazará todos los datos existentes"
 
+
