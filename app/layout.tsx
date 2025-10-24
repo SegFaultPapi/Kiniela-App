@@ -6,28 +6,30 @@ import { FarcasterProvider } from '@/components/farcaster-provider'
 import './globals.css'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const URL = process.env.NEXT_PUBLIC_URL || 'https://v0-kiniela-app.vercel.app';
+  
   return {
     title: 'Kiniela - Prediction Markets',
     description: 'Plataforma de mercados de predicción en Base Network',
     generator: 'Kiniela App',
-      other: {
+    other: {
       'fc:miniapp': JSON.stringify({
-          version: 'next',
-          imageUrl: 'https://your-app.com/embed-image',
-          button: {
-              title: `Launch Your App Name`,
-              action: {
-                  type: 'launch_miniapp',
-                  name: 'Your App Name',
-                  url: 'https://your-app.com',
-                  splashImageUrl: 'https://your-app.com/splash-image',
-                  splashBackgroundColor: '#000000',
-              },
+        version: '1',
+        imageUrl: `${URL}/icon.png`,
+        button: {
+          title: 'Launch Kiniela',
+          action: {
+            type: 'launch_miniapp',
+            name: 'Kiniela',
+            url: URL,
+            splashImageUrl: `${URL}/splash.png`,
+            splashBackgroundColor: '#000000',
           },
+        },
       }),
-      },
+    },
   };
-  }
+}
 
 export default function RootLayout({
   children,
