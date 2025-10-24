@@ -8,9 +8,9 @@ function withValidProperties(properties: Record<string, undefined | string | str
     const URL = process.env.NEXT_PUBLIC_URL as string;
     return Response.json({
         "accountAssociation": {  // these will be added in step 5
-          "header": "",
-          "payload": "",
-          "signature": ""
+          "header": "eyJmaWQiOjEzNjUxNTQsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwNEFBMGU1ZmQ1YjdmOWVCQzRhMjYxRThDOTA5NjRjMDBFYjk1RDlBIn0",
+          "payload": "eyJkb21haW4iOiJ2MC1raW5pZWxhLWFwcC52ZXJjZWwuYXBwIn0",
+          "signature": "526mC3kixxVKw44XIjuZ/jYAlAaL3DQYPuLMEsr85iUlDntyTSJpq0V/eOXYWB2lQcMiJIeRREOhhLPCMeHhkxw="
         },
         "baseBuilder": {
             "allowedAddresses": [""] // add your Base Account address here
