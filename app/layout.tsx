@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { Analytics } from '@vercel/analytics/next'
-import { HybridProvider } from '@/components/hybrid-provider'
+import { Providers } from '@/lib/providers'
 import './globals.css'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -39,9 +39,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
-        <HybridProvider>
+        <Providers>
           {children}
-        </HybridProvider>
+        </Providers>
         <Analytics />
       </body>
     </html>
