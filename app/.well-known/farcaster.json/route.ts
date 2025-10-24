@@ -13,7 +13,7 @@ function withValidProperties(properties: Record<string, undefined | string | str
           "signature": "526mC3kixxVKw44XIjuZ/jYAlAaL3DQYPuLMEsr85iUlDntyTSJpq0V/eOXYWB2lQcMiJIeRREOhhLPCMeHhkxw="
         },
         "baseBuilder": {
-            "allowedAddresses": [""] // add your Base Account address here
+            "allowedAddresses": ["0x1615Ad56c1F19B2394cf36496F99A29D4E21932A"] // add your Base Account address here
         },
         "miniapp": {
           "version": "1",
