@@ -54,9 +54,6 @@ export function WalletConnection() {
       setBaseAccountCapabilities(capabilities)
       console.log('🔧 Base Account Capabilities:', {
         capabilities,
-        hasAtomicBatch: capabilities?.atomicBatch,
-        hasPaymasterService: capabilities?.paymasterService,
-        hasAuxiliaryFunds: capabilities?.auxiliaryFunds,
         timestamp: new Date().toISOString()
       })
     }
@@ -64,7 +61,7 @@ export function WalletConnection() {
 
   // Logs para verificar el estado de conexión
   useEffect(() => {
-    console.log('🔗 Wallet Connection Status:', {
+    console.log('🔗 Base App Wallet Status:', {
       isConnected,
       isConnecting,
       address: address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'No address',
@@ -74,33 +71,18 @@ export function WalletConnection() {
     })
 
     if (isConnected && address) {
-      if (isBaseApp && baseAccountCapabilities) {
-        console.log('✅ Base Account conectado automáticamente:', {
-          address,
-          network: 'Base Network',
-          walletType: 'Base Account (Smart Wallet)',
-          capabilities: baseAccountCapabilities,
-          autoConnected: true,
-          timestamp: new Date().toISOString()
-        })
-      } else {
-        console.log('✅ Wallet tradicional conectado:', {
-          address,
-          network: 'Base Network',
-          walletType: 'Traditional Wallet',
-          timestamp: new Date().toISOString()
-        })
-      }
+      console.log('✅ Base Account conectado:', {
+        address,
+        network: 'Base Network',
+        walletType: 'Base Account (Smart Wallet)',
+        capabilities: baseAccountCapabilities,
+        autoConnected: isBaseApp,
+        timestamp: new Date().toISOString()
+      })
     } else if (!isConnected && !isConnecting) {
-      console.log('❌ Wallet desconectado')
+      console.log('❌ Base Account desconectado')
     }
   }, [isConnected, isConnecting, address, isBaseApp, baseAccountCapabilities])
-
-  // Log cuando se desconecta
-  const handleDisconnect = () => {
-    console.log('🔌 Desconectando wallet...')
-    disconnect()
-  }
 
   // Si estamos en Base App y conectados, mostrar información de Base Account
   if (isBaseApp && isConnected && baseAccountCapabilities) {
@@ -132,25 +114,42 @@ export function WalletConnection() {
     )
   }
 
-  // Para wallets tradicionales o cuando no estamos en Base App
+  // Para desarrollo fuera de Base App, mostrar botón de conexión
+  if (!isBaseApp) {
+    return (
+      <div className="flex items-center gap-4">
+        <div className="text-sm text-yellow-400">
+          ⚠️ Ejecutándose fuera de Base App
+        </div>
+        <Wallet>
+          <ConnectWallet>
+            <div className="flex items-center gap-2">
+              <Avatar className="h-6 w-6" />
+              <Name />
+            </div>
+          </ConnectWallet>
+          <WalletDropdown>
+            <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+              <Avatar />
+              <Name />
+              <Address />
+            </Identity>
+            <WalletDropdownDisconnect />
+          </WalletDropdown>
+        </Wallet>
+      </div>
+    )
+  }
+
+  // Estado de carga cuando está conectando en Base App
   return (
     <div className="flex items-center gap-4">
-      <Wallet>
-        <ConnectWallet>
-          <div className="flex items-center gap-2">
-            <Avatar className="h-6 w-6" />
-            <Name />
-          </div>
-        </ConnectWallet>
-        <WalletDropdown>
-          <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-            <Avatar />
-            <Name />
-            <Address />
-          </Identity>
-          <WalletDropdownDisconnect />
-        </WalletDropdown>
-      </Wallet>
+      <div className="flex items-center gap-2">
+        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+        <div className="text-sm text-gray-300">
+          Conectando Base Account...
+        </div>
+      </div>
     </div>
   )
 }
