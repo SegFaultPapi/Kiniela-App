@@ -31,3 +31,4 @@ contracts/broadcast/
 contracts/cache/
 contracts/out/
 contracts/.env
+/lib/generated/prisma
