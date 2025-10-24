@@ -10,7 +10,7 @@ function withValidProperties(properties: Record<string, any>) {
 }
 
 export async function GET() {
-  const URL = process.env.NEXT_PUBLIC_URL as string;
+  const URL = process.env.NEXT_PUBLIC_URL || 'https://v0-kiniela-app.vercel.app';
   
   const manifest = {
     accountAssociation: {
@@ -40,7 +40,7 @@ export async function GET() {
       tags: ["prediction", "markets", "base", "betting", "social"],
       heroImageUrl: `${URL}/og-image.png`,
       tagline: "Bet on anything",
-      ogTitle: "Kiniela - Prediction Markets on Base",
+      ogTitle: "Kiniela - Prediction Markets",
       ogDescription: "Create and bet on prediction markets with friends on Base.",
       ogImageUrl: `${URL}/og-image.png`,
       noindex: false
