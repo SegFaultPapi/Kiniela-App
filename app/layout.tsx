@@ -5,10 +5,6 @@ import { Analytics } from '@vercel/analytics/next'
 import { FarcasterProvider } from '@/components/farcaster-provider'
 import './globals.css'
 
-export const metadata: Metadata = {
-    
-}
-
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Kiniela - Prediction Markets',
