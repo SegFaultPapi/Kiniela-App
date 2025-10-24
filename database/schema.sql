@@ -79,3 +79,4 @@ CREATE POLICY "Transactions are readable by owner" ON transactions FOR SELECT US
 CREATE POLICY "Users can create own transactions" ON transactions FOR INSERT WITH CHECK (true);
 
 
+
