@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuthenticate, useMiniKit } from '@coinbase/onchainkit/minikit'
+import React from 'react'
 
 interface SecureUserDashboardProps {
   verifiedFid: number
@@ -21,38 +21,46 @@ function SecureUserDashboard({ verifiedFid }: SecureUserDashboardProps) {
 }
 
 export function SecurityExample() {
-  const { user } = useAuthenticate() // For security
-  const { context } = useMiniKit()   // For UX 
-
   return (
     <div className="space-y-4">
-      {/* Safe: UX personalization with context */}
-      {context.user.fid && (
-        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <h3 className="text-blue-800 font-bold">👋 Welcome Message</h3>
-          <p className="text-blue-700">
-            Hi there, user {context.user.fid}! This is just for UX personalization.
-          </p>
-          <p className="text-blue-600 text-sm">
-            This data comes from context and should only be used for UX hints.
-          </p>
-        </div>
-      )}
+      <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+        <h3 className="text-yellow-800 font-bold">⚠️ MiniKit Not Available</h3>
+        <p className="text-yellow-700">
+          MiniKit hooks are not available in this environment. This is normal for non-Base App environments.
+        </p>
+        <p className="text-yellow-600 text-sm mt-2">
+          In a Base App environment, you would see:
+        </p>
+        <ul className="text-yellow-600 text-sm mt-1 ml-4 list-disc">
+          <li>Context user data for UX personalization</li>
+          <li>Authenticated user data for security operations</li>
+          <li>Cryptographic verification of user identity</li>
+        </ul>
+      </div>
+
+      {/* Example of what would be shown in Base App */}
+      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <h3 className="text-blue-800 font-bold">👋 Welcome Message (Example)</h3>
+        <p className="text-blue-700">
+          Hi there, user 12345! This is just for UX personalization.
+        </p>
+        <p className="text-blue-600 text-sm">
+          This data comes from context and should only be used for UX hints.
+        </p>
+      </div>
       
-      {/* Safe: Security with authentication */}
-      {user && (
-        <SecureUserDashboard verifiedFid={user.fid} />
-      )}
+      {/* Example secure dashboard */}
+      <SecureUserDashboard verifiedFid={12345} />
 
       {/* Show authentication status */}
       <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
         <h3 className="text-gray-800 font-bold">🔍 Authentication Status</h3>
         <div className="space-y-2 text-sm">
           <p>
-            <span className="font-medium">Context User:</span> {context.user.fid ? `FID ${context.user.fid}` : 'Not available'}
+            <span className="font-medium">Context User:</span> Not available (MiniKit not enabled)
           </p>
           <p>
-            <span className="font-medium">Authenticated User:</span> {user ? `FID ${user.fid} (Verified)` : 'Not authenticated'}
+            <span className="font-medium">Authenticated User:</span> Not authenticated (MiniKit not enabled)
           </p>
           <p className="text-gray-600">
             Use context for UX, authentication for security-critical operations.

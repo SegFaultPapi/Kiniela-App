@@ -1,15 +1,14 @@
 'use client'
 
-import { useMiniKit, useAuthenticate } from '@coinbase/onchainkit/minikit'
 import { useCapabilities, useAccount } from 'wagmi'
 import { useEffect, useState } from 'react'
 
 export function AutoWalletConnect({ children }: { children: React.ReactNode }) {
-  const { user: contextUser, client } = useMiniKit()
-  const { user: authenticatedUser, authenticate } = useAuthenticate()
-  const account = useAccount()
   const [isConnecting, setIsConnecting] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [miniKitAvailable, setMiniKitAvailable] = useState(false)
+
+  const account = useAccount()
 
   // Detectar capacidades de Base Account
   const { data: capabilities } = useCapabilities({
@@ -19,40 +18,34 @@ export function AutoWalletConnect({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function autoConnect() {
       try {
-        // 1. Verificar si está en Base App
-        if (client?.isBaseApp) {
-          // Intentar autenticación criptográfica
-          try {
-            const authResult = await authenticate()
-            if (authResult) {
-              console.log('User authenticated:', authResult)
-              setIsConnecting(false)
-              return
-            }
-          } catch (authError) {
-            console.log('Authentication failed, continuing with wallet connection:', authError)
-          }
-          
-          // Si la autenticación falla, continuar con wallet connection
+        // Check if we're in a Base App environment by checking for Base-specific APIs
+        const isBaseApp = typeof window !== 'undefined' && 
+          (window.location.hostname.includes('base.org') || 
+           window.location.hostname.includes('base.app') ||
+           window.navigator.userAgent.includes('Base'))
+
+        if (isBaseApp) {
+          console.log('Base App environment detected')
+          // In Base App, wallet should be automatically connected
           setIsConnecting(false)
           return
         }
 
-        // 2. Fallback a WalletConnect para wallets externos
+        // For non-Base environments, check if wallet is connected
         if (!account.isConnected) {
-          // Mostrar opciones de conexión manual
           setError('Conecta tu wallet para continuar')
         }
-        
+
         setIsConnecting(false)
       } catch (err) {
+        console.log('Auto-connection error:', err)
         setError('Error conectando wallet')
         setIsConnecting(false)
       }
     }
 
     autoConnect()
-  }, [client, account.isConnected, authenticate])
+  }, [account.isConnected])
 
   // Loading state
   if (isConnecting) {
@@ -69,7 +62,7 @@ export function AutoWalletConnect({ children }: { children: React.ReactNode }) {
     return (
       <div className="p-4 bg-red-50 rounded-lg">
         <p className="text-red-600">{error}</p>
-        <button 
+        <button
           className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
           onClick={() => window.location.reload()}
         >

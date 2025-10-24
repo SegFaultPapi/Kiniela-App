@@ -1,6 +1,5 @@
 'use client'
 
-import { useAuthenticate } from '@coinbase/onchainkit/minikit'
 import { useState } from 'react'
 
 async function saveUserSession(authenticatedUser: any) {
@@ -33,18 +32,24 @@ async function saveUserSession(authenticatedUser: any) {
 }
 
 export default function AuthButton() {
-  const { user, authenticate } = useAuthenticate()
   const [isAuthenticating, setIsAuthenticating] = useState(false)
+  const [user, setUser] = useState<any>(null)
 
   const handleAuth = async () => {
     setIsAuthenticating(true)
     try {
-      const authenticatedUser = await authenticate()
-      if (authenticatedUser) {
-        console.log('Authenticated user:', authenticatedUser.fid)
-        // Save to your backend
-        await saveUserSession(authenticatedUser)
+      // Simulate authentication for demo purposes
+      // In a real Base App environment, this would use MiniKit
+      const mockUser = {
+        fid: 12345,
+        address: '0x1234567890123456789012345678901234567890',
+        signature: 'mock-signature',
+        message: 'mock-message'
       }
+      
+      console.log('Mock authenticated user:', mockUser.fid)
+      setUser(mockUser)
+      await saveUserSession(mockUser)
     } catch (error) {
       console.error('Authentication failed:', error)
     } finally {
@@ -79,19 +84,30 @@ export default function AuthButton() {
   }
 
   return (
-    <button 
-      onClick={handleAuth}
-      disabled={isAuthenticating}
-      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      {isAuthenticating ? (
-        <div className="flex items-center gap-2">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-          Authenticating...
-        </div>
-      ) : (
-        'Sign In with Farcaster'
-      )}
-    </button>
+    <div className="space-y-4">
+      <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+        <p className="text-yellow-800 font-medium">
+          ⚠️ Demo Mode
+        </p>
+        <p className="text-yellow-700 text-sm mt-1">
+          This is a demo version. In a Base App environment, this would use MiniKit for real Farcaster authentication.
+        </p>
+      </div>
+      
+      <button 
+        onClick={handleAuth}
+        disabled={isAuthenticating}
+        className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isAuthenticating ? (
+          <div className="flex items-center gap-2">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            Authenticating...
+          </div>
+        ) : (
+          'Sign In with Farcaster (Demo)'
+        )}
+      </button>
+    </div>
   )
 }
