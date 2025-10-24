@@ -4,6 +4,7 @@ import { Star, List, User, PlusCircle } from "lucide-react"
 import { MarketCarousel } from "@/components/market-carousel"
 import { TrendingCard } from "@/components/trending-card"
 import { WalletConnection } from "@/components/wallet-connection"
+import { AuthManager } from "@/components/auth/AuthManager"
 import { sdk } from '@farcaster/miniapp-sdk'
 import { useEffect } from 'react'
 import Link from "next/link"
@@ -349,159 +350,161 @@ export default function Home() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#1a2332] pb-16">
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-2 border-b border-white/10">
-        <div className="w-10" />
-        <h1 className="text-lg font-bold text-white">Kiniela</h1>
-        <WalletConnection />
-      </header>
+    <AuthManager>
+      <div className="min-h-screen bg-[#1a2332] pb-16">
+        {/* Header */}
+        <header className="flex items-center justify-between px-6 py-2 border-b border-white/10">
+          <div className="w-10" />
+          <h1 className="text-lg font-bold text-white">Kiniela</h1>
+          <WalletConnection />
+        </header>
 
-      {/* Main Content */}
-      <main className="px-6 pt-6">
-        <h2 className="text-3xl font-bold text-white mb-6">Featured Markets</h2>
+        {/* Main Content */}
+        <main className="px-6 pt-6">
+          <h2 className="text-3xl font-bold text-white mb-6">Featured Markets</h2>
 
-        <TrendingCard />
+          <TrendingCard />
 
-        {/* Politics Section */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Politics</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
+          {/* Politics Section */}
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Politics</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={politicsMarkets} />
+          </section>
+
+          {/* Economy Section */}
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Economy</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={economyMarkets} />
+          </section>
+
+          {/* Technology Section */}
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Technology</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={technologyMarkets} />
+          </section>
+
+          {/* Entertainment Section */}
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Entertainment</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={entertainmentMarkets} />
+          </section>
+
+          {/* Soccer Section */}
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Soccer</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={soccerMarkets} />
+          </section>
+
+          {/* Basketball Section */}
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Basketball</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={basketballMarkets} />
+          </section>
+
+          {/* Tennis Section */}
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Tennis</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={tennisMarkets} />
+          </section>
+
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">American Football</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={footballMarkets} />
+          </section>
+
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Baseball</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={baseballMarkets} />
+          </section>
+
+          <section className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Hockey</h3>
+              <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
+                See All
+              </button>
+            </div>
+            <MarketCarousel markets={hockeyMarkets} />
+          </section>
+        </main>
+
+        {/* Bottom Navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-[#1a2332] border-t border-white/10 px-6 py-2">
+          <div className="flex items-center justify-around max-w-md mx-auto">
+            <button className="flex flex-col items-center gap-0.5">
+              <Star className="w-5 h-5 text-blue-500 fill-blue-500" />
+              <span className="text-[10px] text-blue-500 font-medium">Featured</span>
             </button>
+            <Link href="/all-markets" className="flex flex-col items-center gap-0.5">
+              <List className="w-5 h-5 text-gray-400" />
+              <span className="text-[10px] text-gray-400">All Markets</span>
+            </Link>
+            <Link href="/custom-markets" className="flex flex-col items-center gap-0.5">
+              <PlusCircle className="w-5 h-5 text-gray-400" />
+              <span className="text-[10px] text-gray-400">My Markets</span>
+            </Link>
+            <Link href="/profile" className="flex flex-col items-center gap-0.5">
+              <User className="w-5 h-5 text-gray-400" />
+              <span className="text-[10px] text-gray-400">Profile</span>
+            </Link>
           </div>
-          <MarketCarousel markets={politicsMarkets} />
-        </section>
+        </nav>
 
-        {/* Economy Section */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Economy</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
-            </button>
-          </div>
-          <MarketCarousel markets={economyMarkets} />
-        </section>
-
-        {/* Technology Section */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Technology</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
-            </button>
-          </div>
-          <MarketCarousel markets={technologyMarkets} />
-        </section>
-
-        {/* Entertainment Section */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Entertainment</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
-            </button>
-          </div>
-          <MarketCarousel markets={entertainmentMarkets} />
-        </section>
-
-        {/* Soccer Section */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Soccer</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
-            </button>
-          </div>
-          <MarketCarousel markets={soccerMarkets} />
-        </section>
-
-        {/* Basketball Section */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Basketball</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
-            </button>
-          </div>
-          <MarketCarousel markets={basketballMarkets} />
-        </section>
-
-        {/* Tennis Section */}
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Tennis</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
-            </button>
-          </div>
-          <MarketCarousel markets={tennisMarkets} />
-        </section>
-
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">American Football</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
-            </button>
-          </div>
-          <MarketCarousel markets={footballMarkets} />
-        </section>
-
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Baseball</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
-            </button>
-          </div>
-          <MarketCarousel markets={baseballMarkets} />
-        </section>
-
-        <section className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white">Hockey</h3>
-            <button className="text-blue-400 text-sm font-medium underline hover:text-blue-300 transition-colors">
-              See All
-            </button>
-          </div>
-          <MarketCarousel markets={hockeyMarkets} />
-        </section>
-      </main>
-
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#1a2332] border-t border-white/10 px-6 py-2">
-        <div className="flex items-center justify-around max-w-md mx-auto">
-          <button className="flex flex-col items-center gap-0.5">
-            <Star className="w-5 h-5 text-blue-500 fill-blue-500" />
-            <span className="text-[10px] text-blue-500 font-medium">Featured</span>
-          </button>
-          <Link href="/all-markets" className="flex flex-col items-center gap-0.5">
-            <List className="w-5 h-5 text-gray-400" />
-            <span className="text-[10px] text-gray-400">All Markets</span>
-          </Link>
-          <Link href="/custom-markets" className="flex flex-col items-center gap-0.5">
-            <PlusCircle className="w-5 h-5 text-gray-400" />
-            <span className="text-[10px] text-gray-400">My Markets</span>
-          </Link>
-          <Link href="/profile" className="flex flex-col items-center gap-0.5">
-            <User className="w-5 h-5 text-gray-400" />
-            <span className="text-[10px] text-gray-400">Profile</span>
-          </Link>
-        </div>
-      </nav>
-
-      <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
-    </div>
+        <style jsx global>{`
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
+      </div>
+    </AuthManager>
   )
 }
