@@ -50,6 +50,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <OnchainKitProvider 
             apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY} 
             chain={base}
+            ensAddress="0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
+            ensUniversalResolverAddress="0x8cab227b1162f03b8338331adaad7aadc83b895e"
           >
             {children}
           </OnchainKitProvider>

@@ -17,6 +17,7 @@ import {
 } from '@coinbase/onchainkit/identity'
 import { formatUnits } from 'viem'
 import { useAutoConnect } from '@/hooks/useAutoConnect'
+import { useEnsName } from 'wagmi'
 
 // USDC Contract Address on Base
 const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as `0x${string}`
@@ -71,6 +72,16 @@ export function WalletConnection() {
     query: {
       refetchInterval: 10000, // Actualizar cada 10 segundos
       enabled: !!address && isConnected, // Solo consultar si está conectado
+    }
+  })
+
+  // Get ENS name for the connected address
+  const { data: ensName } = useEnsName({
+    address: address,
+    chainId: base.id,
+    query: {
+      enabled: !!address && isConnected,
+      staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     }
   })
 
@@ -185,6 +196,7 @@ export function WalletConnection() {
       console.log('🔍 OnchainKit Debug Info:', {
         address,
         addressFormatted: formatAddress(address),
+        ensName,
         hasNameComponent: true, // Name component should work
         hasAddressComponent: true, // Address component should work
         hasAvatarComponent: true, // Avatar component should work
@@ -245,8 +257,13 @@ export function WalletConnection() {
               <Avatar className="h-6 w-6" />
               <div className="hidden sm:block text-sm font-medium text-white">
                 <Name />
-                {/* Fallback si Name no funciona */}
-                {!address && <span className="text-gray-400">Wallet</span>}
+                {/* Fallback manual con ENS name */}
+                {!ensName && address && (
+                  <span className="text-gray-300">{formatAddress(address)}</span>
+                )}
+                {ensName && (
+                  <span className="text-blue-400">{ensName}</span>
+                )}
               </div>
               {isSmartWallet && (
                 <span className="hidden md:inline text-xs text-blue-400 font-medium" title="Smart Wallet con Account Abstraction">⚡</span>
@@ -261,8 +278,14 @@ export function WalletConnection() {
                   <div className="flex-1">
                     <div className="text-lg font-semibold text-white">
                       <Name />
-                      {/* Fallback manual si Name no funciona */}
-                      {address && (
+                      {/* ENS name fallback */}
+                      {ensName && (
+                        <div className="text-sm text-blue-400 mt-1">
+                          {ensName}
+                        </div>
+                      )}
+                      {/* Address fallback */}
+                      {!ensName && address && (
                         <div className="text-sm text-gray-300 mt-1">
                           {formatAddress(address)}
                         </div>
@@ -270,7 +293,7 @@ export function WalletConnection() {
                     </div>
                     <div className="text-sm text-gray-400 font-mono">
                       <Address />
-                      {/* Fallback manual si Address no funciona */}
+                      {/* Full address fallback */}
                       {address && (
                         <div className="text-xs text-gray-500 mt-1">
                           {address}
