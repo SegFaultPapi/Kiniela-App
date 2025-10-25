@@ -58,7 +58,7 @@ export default function AllMarkets() {
       subcategory: "Football",
       lastBetAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
       status: 'closing_soon',
-      image: "/kiniela_logo.png"
+      image: "/markets/argentina-cup.jpg"
     },
     {
       id: "2",
@@ -149,7 +149,7 @@ export default function AllMarkets() {
       subcategory: "AI",
       lastBetAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
       status: 'active',
-      image: "/kiniela_logo.png"
+      image: "/markets/AGI.jpg"
     },
   ]
 

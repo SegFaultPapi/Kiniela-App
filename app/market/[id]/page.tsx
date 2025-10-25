@@ -77,7 +77,7 @@ const MOCK_MARKETS: Record<string, MarketDetail> = {
     id: "1",
     title: "Will Argentina win Copa América 2026?",
     description: "Prediction about Argentina's chances to win the Copa América 2026 tournament. The winner will be determined by the official result of the final match. This includes any penalties or extra time if applicable. The market will resolve based on the official tournament result from CONMEBOL.",
-    image: "/kiniela_logo.png",
+    image: "/markets/argentina-cup.jpg",
     yesPercent: 72,
     noPercent: 28,
     poolTotal: 45200,

@@ -39,7 +39,7 @@ export default function Home() {
   const soccerMarkets: FeaturedMarket[] = [
     {
       id: "soccer-1",
-      image: "/kiniela_logo.png",
+      image: "/markets/argentina-cup.jpg",
       percentage: 72,
       title: "Will Argentina win Copa América 2026?",
       volume: "45.2k",
@@ -300,7 +300,7 @@ export default function Home() {
       volume: "12.8k",
     },
     {
-      image: "/kiniela_logo.png",
+      image: "/markets/renewable.jpg",
       percentage: 67,
       title: "Will EU pass new AI regulation in 2026?",
       volume: "9.3k",
@@ -327,7 +327,7 @@ export default function Home() {
       volume: "19.7k",
     },
     {
-      image: "/kiniela_logo.png",
+      image: "/markets/will-bitcoin-reach.jpg",
       percentage: 59,
       title: "Will Bitcoin reach $150k in 2026?",
       volume: "16.9k",
@@ -381,7 +381,7 @@ export default function Home() {
 
   const technologyMarkets = [
     {
-      image: "/kiniela_logo.png",
+      image: "/markets/AGI.jpg",
       percentage: 76,
       title: "Will GPT-6 launch in 2026?",
       volume: "20.3k",
