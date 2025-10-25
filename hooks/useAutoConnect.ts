@@ -42,6 +42,21 @@ export function useAutoConnect() {
 
     if (!isBaseApp) {
       console.log('🔗 KIN-001 AC-002: Not in Base App, skipping auto-connect')
+      
+      // SECURITY: En desarrollo, limpiar cualquier conexión cacheada al iniciar
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const recentReloads = window.sessionStorage.getItem('reloadCount')
+        if (!recentReloads) {
+          console.log('🔒 SECURITY: Cleaning cached connections on first load')
+          const wagmiKeys = Object.keys(window.localStorage).filter(key => 
+            key.startsWith('wagmi.') || key.includes('wallet')
+          )
+          if (wagmiKeys.length > 0) {
+            wagmiKeys.forEach(key => window.localStorage.removeItem(key))
+            window.sessionStorage.setItem('reloadCount', '1')
+          }
+        }
+      }
       return
     }
 

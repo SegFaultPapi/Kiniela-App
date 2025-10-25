@@ -81,3 +81,4 @@ CREATE POLICY "Users can create own transactions" ON transactions FOR INSERT WIT
 
 
 
+

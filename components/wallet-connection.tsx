@@ -1,7 +1,7 @@
 'use client'
 
 import { useAccount, useDisconnect, useCapabilities, useBalance } from 'wagmi'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { 
   ConnectWallet,
   Wallet,
@@ -21,6 +21,20 @@ import { useAutoConnect } from '@/hooks/useAutoConnect'
 const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as `0x${string}`
 
 export function WalletConnection() {
+  // Agregar estilos CSS para la animación de pulso
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
   const { address, isConnected, isConnecting } = useAccount()
   const { disconnect } = useDisconnect()
   const [isBaseApp, setIsBaseApp] = useState(false)
@@ -98,6 +112,22 @@ export function WalletConnection() {
       })
     }
   }, [capabilities])
+
+  // SECURITY: Verificar que la wallet conectada es válida
+  useEffect(() => {
+    if (!isMounted || !isConnected || !address) return
+
+    // Si hay una wallet conectada sin user interaction y no estamos en Base App, desconectar
+    if (!isBaseApp && isConnected && !isConnecting) {
+      const userInitiated = window.sessionStorage.getItem('userConnectedWallet')
+      if (!userInitiated) {
+        console.warn('🔒 SECURITY: Unexpected wallet connection detected, disconnecting...')
+        disconnect()
+        setConnectionError('Please reconnect your wallet')
+        return
+      }
+    }
+  }, [isMounted, isConnected, isConnecting, address, isBaseApp, disconnect])
 
   // Logs para verificar el estado de conexión
   useEffect(() => {
@@ -181,31 +211,51 @@ export function WalletConnection() {
   // Para desarrollo fuera de Base App, mostrar botón de conexión (AC-003)
   if (!isBaseApp) {
     return (
-      <div className="flex flex-col items-end gap-2">
-        {connectionError && (
-          <div className="text-xs text-red-400 bg-red-900/20 px-2 py-1 rounded">
-            {connectionError}
+      <Wallet>
+        <ConnectWallet>
+          <div 
+            style={{
+              backgroundColor: '#0066FF',
+              color: '#FFFFFF',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              border: 'none',
+              fontSize: '14px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              display: 'inline-block',
+              textAlign: 'center',
+              boxShadow: '0 4px 12px rgba(0, 102, 255, 0.6)',
+              minHeight: 'auto',
+              minWidth: 'auto',
+              whiteSpace: 'nowrap',
+              lineHeight: '1.5'
+            }}
+            onClick={() => {
+              // Marcar que la conexión fue iniciada por el usuario
+              if (typeof window !== 'undefined') {
+                window.sessionStorage.setItem('userConnectedWallet', 'true')
+              }
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#0052CC';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#0066FF';
+            }}
+          >
+            💼 Conectar
           </div>
-        )}
-        <Wallet>
-          <ConnectWallet>
-            <button className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-blue-500/25 hover:scale-105">
-              <div className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center">
-                <div className="w-2 h-2 bg-white rounded-full"></div>
-              </div>
-              Connect Wallet
-            </button>
-          </ConnectWallet>
-          <WalletDropdown>
-            <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-              <Avatar />
-              <Name />
-              <Address />
-            </Identity>
-            <WalletDropdownDisconnect />
-          </WalletDropdown>
-        </Wallet>
-      </div>
+        </ConnectWallet>
+        <WalletDropdown>
+          <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+            <Avatar />
+            <Name />
+            <Address />
+          </Identity>
+          <WalletDropdownDisconnect />
+        </WalletDropdown>
+      </Wallet>
     )
   }
 
@@ -247,12 +297,33 @@ export function WalletConnection() {
   return (
     <Wallet>
       <ConnectWallet>
-        <button className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-blue-500/25 hover:scale-105">
-          <div className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center">
-            <div className="w-2 h-2 bg-white rounded-full"></div>
-          </div>
-          Connect Wallet
-        </button>
+        <div 
+          style={{
+            backgroundColor: '#0066FF',
+            color: '#FFFFFF',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: 'none',
+            fontSize: '14px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            display: 'inline-block',
+            textAlign: 'center',
+            boxShadow: '0 4px 12px rgba(0, 102, 255, 0.6)',
+            minHeight: 'auto',
+            minWidth: 'auto',
+            whiteSpace: 'nowrap',
+            lineHeight: '1.5'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#0052CC';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#0066FF';
+          }}
+        >
+          💼 Conectar
+        </div>
       </ConnectWallet>
       <WalletDropdown>
         <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>

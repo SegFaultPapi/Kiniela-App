@@ -3,28 +3,53 @@
 import { MobileLayout } from "@/components/MobileLayout"
 import { User, Settings, Bell, HelpCircle, LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useAccount, useDisconnect } from "wagmi"
+import { Avatar, Name, Address, Identity } from "@coinbase/onchainkit/identity"
 
 export default function Profile() {
   const router = useRouter()
+  const { address, isConnected } = useAccount()
+  const { disconnect } = useDisconnect()
+
+  // Si no está conectado, mostrar mensaje
+  if (!isConnected) {
+    return (
+      <MobileLayout title="Profile" activeTab="profile">
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+          <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+            <User className="w-10 h-10 text-gray-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-white mb-2">No Wallet Connected</h3>
+          <p className="text-gray-400 mb-6">Connect your wallet to view your profile</p>
+          <button
+            onClick={() => router.push('/')}
+            className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+          >
+            Go to Home
+          </button>
+        </div>
+      </MobileLayout>
+    )
+  }
   
   return (
     <MobileLayout title="Profile" activeTab="profile">
-      {/* User Info Section */}
+      {/* User Info Section - REAL DATA */}
       <section className="mb-6">
         <div className="bg-gray-800 rounded-lg p-4 mb-4">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
-            </div>
+          <Identity address={address} className="flex items-center gap-4">
+            <Avatar className="w-16 h-16" />
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-white">Base User</h3>
-              <p className="text-sm text-gray-400">0x1234...5678</p>
-              <div className="flex items-center gap-2 mt-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-xs text-green-400">Base Account Connected</span>
-              </div>
+              <Name className="text-lg font-semibold text-white" />
+              <Address className="text-sm text-gray-400" />
+              {isConnected && (
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-green-400">Wallet Connected</span>
+                </div>
+              )}
             </div>
-          </div>
+          </Identity>
         </div>
       </section>
 
@@ -93,7 +118,10 @@ export default function Profile() {
       {/* Logout Section */}
       <section className="mb-6">
         <button 
-          onClick={() => alert('Wallet disconnection functionality coming soon!')}
+          onClick={() => {
+            disconnect()
+            router.push('/')
+          }}
           className="w-full touch-target bg-red-600 text-white rounded-lg p-4 flex items-center justify-center gap-3 hover:bg-red-500 transition-colors"
         >
           <LogOut className="w-5 h-5" />

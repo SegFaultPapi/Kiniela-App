@@ -225,3 +225,38 @@ input[type="submit"],
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Wallet Connect Button Override - Asegurar visibilidad */
+/* Sobrescribir estilos de OnchainKit */
+button[class*="ock"],
+button[class*="wallet"],
+[class*="ConnectWallet"] button,
+[class*="connectWallet"] button {
+  background-color: #0066FF !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.5) !important;
+  min-height: auto !important;
+  min-width: auto !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+
+button[class*="ock"]:hover,
+button[class*="wallet"]:hover,
+[class*="ConnectWallet"] button:hover,
+[class*="connectWallet"] button:hover {
+  background-color: #0052CC !important;
+}
+
+/* Específicamente para el wrapper de Wallet */
+[data-testid="ockConnectButton"],
+[data-testid="ockConnectWallet"],
+div[class*="wallet"] button {
+  background-color: #0066FF !important;
+  color: #FFFFFF !important;
+}
