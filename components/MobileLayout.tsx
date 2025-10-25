@@ -48,11 +48,11 @@ export function MobileLayout({
                 Create Market
               </button>
               <button 
-                onClick={() => router.push('/custom-markets')}
+                onClick={() => router.push('/my-positions')}
                 className="touch-target bg-purple-600 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-purple-500 transition-colors"
               >
                 <Star className="w-4 h-4" />
-                My Predictions
+                My Positions
               </button>
             </div>
           </section>

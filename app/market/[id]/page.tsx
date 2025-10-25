@@ -2,9 +2,12 @@
 
 import { MobileLayout } from "@/components/MobileLayout"
 import { useRouter, useParams } from "next/navigation"
-import { ArrowLeft, Clock, Users, TrendingUp, Share2, Loader2, CheckCircle } from "lucide-react"
+import { ArrowLeft, Clock, Users, TrendingUp, Share2, Loader2, CheckCircle, Trophy } from "lucide-react"
 import { formatUSDC, formatTimeRemaining, isClosingSoon } from "@/lib/market-utils"
 import { useState, useMemo } from "react"
+import { useAccount } from "wagmi"
+import { useClaimablePositions, useClaimWinnings, ClaimablePosition } from "@/hooks/useClaimWinnings"
+import { ClaimPreview } from "@/components/ClaimPreview"
 
 // KIN-003: Utility functions for market detail formatting
 function formatDateTime(dateString: string): string {
@@ -68,53 +71,53 @@ interface BetActivity {
   timestamp: string
 }
 
-// Mock data - KIN-003: Complete market detail data
+// Mock data - KIN-003: Complete market detail data - ACTUALIZADOS PARA 2026
 const MOCK_MARKETS: Record<string, MarketDetail> = {
   "1": {
     id: "1",
-    title: "Will Real Madrid beat FC Barcelona?",
-    description: "Prediction about the outcome of the Spanish classic. The winner will be determined by the official result at the end of regular time (90 minutes + added time). This includes any penalties or extra time if applicable. The market will resolve based on the official match result from the league's official source.",
+    title: "Will Argentina win Copa América 2026?",
+    description: "Prediction about Argentina's chances to win the Copa América 2026 tournament. The winner will be determined by the official result of the final match. This includes any penalties or extra time if applicable. The market will resolve based on the official tournament result from CONMEBOL.",
     image: "/placeholder.svg?height=400&width=600",
-    yesPercent: 68,
-    noPercent: 32,
-    poolTotal: 12500,
-    closesAt: new Date(Date.now() + 1.5 * 60 * 60 * 1000).toISOString(),
+    yesPercent: 72,
+    noPercent: 28,
+    poolTotal: 45200,
+    closesAt: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
     category: "Sports",
     subcategory: "Football",
     status: 'closing_soon',
     createdBy: "0x1234...5678",
-    totalBets: 142,
-    uniqueBettors: 89,
-    lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+    totalBets: 342,
+    uniqueBettors: 189,
+    lastBetAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
     recentActivity: [
       {
         user: "0x4567...8901",
-        amount: 150,
+        amount: 250,
         side: 'yes',
         timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString()
       },
       {
         user: "0x2345...6789",
-        amount: 75,
+        amount: 150,
         side: 'no',
         timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString()
       },
       {
         user: "0x7890...1234",
-        amount: 200,
+        amount: 300,
         side: 'yes',
         timestamp: new Date(Date.now() - 8 * 60 * 1000).toISOString()
       },
       {
         user: "0x3456...7890",
-        amount: 100,
+        amount: 200,
         side: 'no',
         timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString()
       },
       {
         user: "0x5678...9012",
-        amount: 300,
+        amount: 500,
         side: 'yes',
         timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString()
       }
@@ -122,49 +125,49 @@ const MOCK_MARKETS: Record<string, MarketDetail> = {
   },
   "soccer-1": {
     id: "soccer-1",
-    title: "Real Madrid vs. FC Barcelona",
-    description: "Prediction about the outcome of the Spanish classic. The winner will be determined by the official result at the end of regular time. This market focuses on the main result excluding penalties.",
+    title: "Will Messi score 20+ goals in MLS 2026?",
+    description: "Prediction about Lionel Messi's goal-scoring performance in the MLS 2026 season. The market will resolve based on official MLS statistics at the end of the regular season. This includes goals scored in regular season matches only, excluding playoffs.",
     image: "/placeholder.svg?height=400&width=600",
-    yesPercent: 68,
-    noPercent: 32,
-    poolTotal: 12500,
-    closesAt: new Date(Date.now() + 5 * 60 * 60 * 1000).toISOString(),
+    yesPercent: 58,
+    noPercent: 42,
+    poolTotal: 28700,
+    closesAt: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
     category: "Sports",
     subcategory: "Football",
     status: 'active',
     createdBy: "0x1234...5678",
-    totalBets: 156,
-    uniqueBettors: 95,
-    lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+    totalBets: 256,
+    uniqueBettors: 195,
+    lastBetAt: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
     recentActivity: [
       {
         user: "0x1111...2222",
-        amount: 250,
+        amount: 350,
         side: 'yes',
         timestamp: new Date(Date.now() - 3 * 60 * 1000).toISOString()
       },
       {
         user: "0x3333...4444",
-        amount: 125,
+        amount: 175,
         side: 'no',
         timestamp: new Date(Date.now() - 7 * 60 * 1000).toISOString()
       },
       {
         user: "0x5555...6666",
-        amount: 180,
+        amount: 280,
         side: 'yes',
         timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString()
       },
       {
         user: "0x7777...8888",
-        amount: 90,
+        amount: 140,
         side: 'no',
         timestamp: new Date(Date.now() - 14 * 60 * 1000).toISOString()
       },
       {
         user: "0x9999...0000",
-        amount: 400,
+        amount: 600,
         side: 'yes',
         timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString()
       }
@@ -176,12 +179,23 @@ export default function MarketDetailPage() {
   const router = useRouter()
   const params = useParams()
   const marketId = params.id as string
+  const { address, isConnected } = useAccount()
   
   const [betAmount, setBetAmount] = useState("")
   const [selectedOption, setSelectedOption] = useState<'yes' | 'no' | null>(null)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [betState, setBetState] = useState<'idle' | 'pending' | 'success' | 'error'>('idle')
   const [betError, setBetError] = useState<string | null>(null)
+  
+  // KIN-005: Claim winnings state management
+  const [showClaimPreview, setShowClaimPreview] = useState(false)
+  const { data: claimablePositions = [] } = useClaimablePositions()
+  const { claimWinnings, retryClaim, claimState, error: claimError } = useClaimWinnings()
+  
+  // Find claimable position for this market
+  const claimablePosition = useMemo(() => {
+    return claimablePositions.find(pos => pos.marketId === marketId)
+  }, [claimablePositions, marketId])
   
   // Get market data
   const market = MOCK_MARKETS[marketId] || MOCK_MARKETS["1"]
@@ -225,6 +239,21 @@ export default function MarketDetailPage() {
       setBetError('Transaction failed. Please try again.')
       setBetState('error')
     }
+  }
+
+  // KIN-005: Handle claim winnings
+  const handleClaimWinnings = async () => {
+    if (!claimablePosition) return
+    
+    await claimWinnings(claimablePosition.positionId, claimablePosition.claimableAmount)
+  }
+
+  const handleRetryClaim = () => {
+    retryClaim()
+  }
+
+  const handleCancelClaim = () => {
+    setShowClaimPreview(false)
   }
 
   return (
@@ -554,6 +583,56 @@ export default function MarketDetailPage() {
         )}
       </section>
 
+      {/* KIN-005: Claim Winnings Section */}
+      {claimablePosition && (
+        <section className="mb-6">
+          <h3 className="text-lg font-semibold text-white mb-3">🏆 Claim Your Winnings</h3>
+          
+          <div className="bg-green-600/10 border border-green-600/30 rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 bg-green-600/20 rounded-full flex items-center justify-center">
+                <Trophy className="w-5 h-5 text-green-400" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-green-400 font-semibold">Congratulations! You Won!</h4>
+                <p className="text-gray-300 text-sm">
+                  This market has been resolved in your favor
+                </p>
+              </div>
+            </div>
+            
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Your position:</span>
+                <span className="text-white font-medium">
+                  {claimablePosition.userSide.toUpperCase()} • {claimablePosition.shares.toFixed(1)} shares
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Resolution:</span>
+                <span className="text-green-400 font-medium">
+                  {claimablePosition.resolution.toUpperCase()}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Amount to claim:</span>
+                <span className="text-green-400 font-bold text-lg">
+                  ${claimablePosition.claimableAmount.toFixed(2)}
+                </span>
+              </div>
+            </div>
+            
+            <button
+              onClick={() => setShowClaimPreview(true)}
+              className="w-full mt-4 bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Trophy className="w-5 h-5" />
+              <span>Claim Winnings - ${claimablePosition.claimableAmount.toFixed(2)}</span>
+            </button>
+          </div>
+        </section>
+      )}
+
       {/* AC-004: Recent Activity */}
       <section className="mb-6">
         <h3 className="text-lg font-semibold text-white mb-3">Recent Activity</h3>
@@ -631,6 +710,22 @@ export default function MarketDetailPage() {
           </div>
         </div>
       </section>
+
+      {/* KIN-005: Claim Preview Modal */}
+      {showClaimPreview && claimablePosition && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-900 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <ClaimPreview
+              position={claimablePosition}
+              claimState={claimState}
+              error={claimError}
+              onClaim={handleClaimWinnings}
+              onRetry={handleRetryClaim}
+              onCancel={handleCancelClaim}
+            />
+          </div>
+        </div>
+      )}
     </MobileLayout>
   )
 }
