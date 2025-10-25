@@ -471,6 +471,31 @@ export function WalletConnection() {
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = '#0066FF';
           }}
+          onClick={() => {
+            console.log('🔗 Connect Wallet Button Clicked:', {
+              isBaseApp,
+              isConnected,
+              isConnecting,
+              address,
+              hostname: window.location.hostname,
+              userAgent: window.navigator.userAgent,
+              ethereum: window.ethereum ? Object.keys(window.ethereum) : 'No ethereum',
+              timestamp: new Date().toISOString()
+            })
+            
+            // Forzar detección de Base App si no se detectó (como el botón Force Base App)
+            if (!isBaseApp) {
+              console.log('🔧 Forcing Base App detection...')
+              window.sessionStorage.setItem('baseApp', 'true')
+              setIsBaseApp(true)
+              
+              // También intentar auto-connect después de forzar detección
+              setTimeout(() => {
+                console.log('🔄 Attempting auto-connect after forcing Base App detection...')
+                // El auto-connect se ejecutará automáticamente en el próximo ciclo
+              }, 100)
+            }
+          }}
         >
           💼 Conectar
         </div>

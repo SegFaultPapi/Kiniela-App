@@ -14,8 +14,28 @@ export function useAutoConnect() {
   const hasAttemptedConnection = useRef(false)
   const retryCount = useRef(0)
   const [error, setError] = useState<string | null>(null)
+  const [forceDetection, setForceDetection] = useState(false)
   const MAX_RETRIES = 3
   const RETRY_DELAY = 2000 // 2 segundos
+
+  // Escuchar cambios en sessionStorage para detección forzada
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const baseAppFlag = window.sessionStorage.getItem('baseApp')
+      if (baseAppFlag === 'true') {
+        console.log('🔧 Base App detection forced, resetting connection attempt')
+        hasAttemptedConnection.current = false
+        retryCount.current = 0
+        setForceDetection(true)
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    // También verificar inmediatamente
+    handleStorageChange()
+
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
 
   useEffect(() => {
     // Solo intentar conectar una vez exitosamente
@@ -23,12 +43,20 @@ export function useAutoConnect() {
       hasAttemptedConnection.current = false
       retryCount.current = 0
       setError(null)
+      setForceDetection(false)
       return
     }
 
-    // Si ya intentamos y fallamos todas las veces, no reintentar
-    if (hasAttemptedConnection.current && retryCount.current >= MAX_RETRIES) {
+    // Si ya intentamos y fallamos todas las veces, no reintentar (a menos que se fuerce)
+    if (hasAttemptedConnection.current && retryCount.current >= MAX_RETRIES && !forceDetection) {
       return
+    }
+
+    // Reset si se fuerza la detección
+    if (forceDetection) {
+      hasAttemptedConnection.current = false
+      retryCount.current = 0
+      setForceDetection(false)
     }
 
     // Detectar si estamos en Base App (detección más agresiva)
@@ -179,7 +207,7 @@ export function useAutoConnect() {
     const timeoutId = setTimeout(attemptAutoConnect, 500)
 
     return () => clearTimeout(timeoutId)
-  }, [connect, connectors, isConnected])
+  }, [connect, connectors, isConnected, forceDetection])
 
   return { isConnected, error }
 }
