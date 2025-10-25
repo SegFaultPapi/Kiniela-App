@@ -8,19 +8,25 @@ import { base } from 'wagmi/chains'
 import { useState } from 'react'
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient())
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        refetchOnWindowFocus: false,
+      },
+    },
+  }))
 
   return (
-    <OnchainKitProvider 
-      apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY} 
-      chain={base}
-      enableMiniKit={true}
-    >
+    <QueryClientProvider client={queryClient}>
       <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
+        <OnchainKitProvider 
+          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY} 
+          chain={base}
+        >
           {children}
-        </QueryClientProvider>
+        </OnchainKitProvider>
       </WagmiProvider>
-    </OnchainKitProvider>
+    </QueryClientProvider>
   )
 }

@@ -20,78 +20,79 @@ interface MarketCarouselProps {
 export function MarketCarousel({ markets }: MarketCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [isScrolling, setIsScrolling] = useState(false)
 
+  // Create infinite loop by duplicating markets
   const loopedMarkets = [...markets, ...markets, ...markets]
 
   useEffect(() => {
     const container = scrollRef.current
     if (!container) return
 
+    const cardWidth = 220 + 20 // card width + gap
+    const containerWidth = container.clientWidth
+
+    // Start at the middle set of markets for infinite scroll
+    const startPosition = markets.length * cardWidth
+    container.scrollLeft = startPosition
+
     const handleScroll = () => {
       const scrollLeft = container.scrollLeft
-      const cardWidth = 232 // card width (220) + gap (12)
-      const index = Math.round(scrollLeft / cardWidth)
-      setActiveIndex(index % markets.length)
-    }
+      
+      // Calculate which card is most visible in the center of the viewport
+      const viewportCenter = scrollLeft + containerWidth / 2
+      const cardIndex = Math.floor(viewportCenter / cardWidth)
+      
+      // Map to original market index
+      const originalIndex = cardIndex % markets.length
+      setActiveIndex(originalIndex)
 
-    container.addEventListener("scroll", handleScroll)
+      // Handle infinite scroll transitions
+      const totalWidth = loopedMarkets.length * cardWidth
+      const threshold = cardWidth
 
-    container.scrollLeft = markets.length * 232
-
-    return () => container.removeEventListener("scroll", handleScroll)
-  }, [markets.length])
-
-  useEffect(() => {
-    const container = scrollRef.current
-    if (!container) return
-
-    const handleScrollEnd = () => {
-      const scrollLeft = container.scrollLeft
-      const cardWidth = 232
-      const totalWidth = cardWidth * markets.length
-
-      // Reset to middle section when reaching edges
-      if (scrollLeft < cardWidth) {
-        container.scrollLeft = scrollLeft + totalWidth
-      } else if (scrollLeft > totalWidth * 2 - cardWidth) {
-        container.scrollLeft = scrollLeft - totalWidth
+      if (scrollLeft < threshold) {
+        // Near the beginning, jump to the end of the middle set
+        container.scrollLeft = markets.length * cardWidth + scrollLeft
+      } else if (scrollLeft > totalWidth - containerWidth - threshold) {
+        // Near the end, jump to the beginning of the middle set
+        container.scrollLeft = markets.length * cardWidth + (scrollLeft - (markets.length * cardWidth))
       }
     }
 
-    let scrollTimeout: NodeJS.Timeout
-    const onScroll = () => {
-      clearTimeout(scrollTimeout)
-      scrollTimeout = setTimeout(handleScrollEnd, 150)
-    }
-
-    container.addEventListener("scroll", onScroll)
-    return () => {
-      container.removeEventListener("scroll", onScroll)
-      clearTimeout(scrollTimeout)
-    }
-  }, [markets.length])
+    container.addEventListener("scroll", handleScroll, { passive: true })
+    return () => container.removeEventListener("scroll", handleScroll)
+  }, [markets.length, loopedMarkets.length])
 
   return (
-    <div
-      ref={scrollRef}
-      className="flex gap-3 overflow-x-auto pb-4 -mx-6 px-6 scrollbar-hide snap-x snap-mandatory"
-      style={{ perspective: "1000px" }}
-    >
-      {loopedMarkets.map((market, index) => {
-        const isActive = index % markets.length === activeIndex
-        return (
-          <div
-            key={index}
-            className="snap-center transition-all duration-300 ease-out"
-            style={{
-              transform: isActive ? "scale(1) translateZ(0px)" : "scale(0.85) translateZ(-50px)",
-              opacity: isActive ? 1 : 0.6,
-            }}
-          >
-            <MarketCard {...market} />
-          </div>
-        )
-      })}
+    <div className="relative">
+      {/* Carousel Container */}
+      <div
+        ref={scrollRef}
+        className="flex gap-5 overflow-x-auto py-2 pb-4 -mx-4 px-4 scrollbar-hide snap-x snap-mandatory"
+        style={{ 
+          scrollBehavior: "smooth"
+        }}
+      >
+        {loopedMarkets.map((market, index) => {
+          const originalIndex = index % markets.length
+          const isActive = originalIndex === activeIndex
+          return (
+            <div
+              key={`${originalIndex}-${Math.floor(index / markets.length)}`}
+              className="snap-center transition-all duration-300 ease-out flex-shrink-0"
+              style={{
+                transform: isActive ? "scale(1.02)" : "scale(0.98)",
+                opacity: isActive ? 1 : 0.8,
+              }}
+            >
+              <MarketCard {...market} />
+            </div>
+          )
+        })}
+      </div>
+
     </div>
   )
 }
+

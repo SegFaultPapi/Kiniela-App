@@ -20,6 +20,12 @@ export function WalletConnection() {
   const { disconnect } = useDisconnect()
   const [isBaseApp, setIsBaseApp] = useState(false)
   const [baseAccountCapabilities, setBaseAccountCapabilities] = useState<any>(null)
+  const [isMounted, setIsMounted] = useState(false)
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   // Detectar capacidades de Base Account
   const { data: capabilities } = useCapabilities({
@@ -28,6 +34,8 @@ export function WalletConnection() {
 
   // Detectar si estamos en Base App
   useEffect(() => {
+    if (!isMounted) return
+    
     const detectBaseApp = () => {
       const isInBaseApp = typeof window !== 'undefined' && 
         (window.location.hostname.includes('base.org') || 
@@ -46,7 +54,7 @@ export function WalletConnection() {
     }
 
     detectBaseApp()
-  }, [])
+  }, [isMounted])
 
   // Detectar capacidades de Base Account
   useEffect(() => {
@@ -61,6 +69,8 @@ export function WalletConnection() {
 
   // Logs para verificar el estado de conexión
   useEffect(() => {
+    if (!isMounted) return
+    
     console.log('🔗 Base App Wallet Status:', {
       isConnected,
       isConnecting,
@@ -82,16 +92,25 @@ export function WalletConnection() {
     } else if (!isConnected && !isConnecting) {
       console.log('❌ Base Account desconectado')
     }
-  }, [isConnected, isConnecting, address, isBaseApp, baseAccountCapabilities])
+  }, [isConnected, isConnecting, address, isBaseApp, baseAccountCapabilities, isMounted])
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!isMounted) {
+    return (
+      <div className="flex items-center gap-2">
+        <div className="w-16 h-8 bg-gray-700 rounded animate-pulse"></div>
+      </div>
+    )
+  }
 
   // Si estamos en Base App y conectados, mostrar información de Base Account
   if (isBaseApp && isConnected && baseAccountCapabilities) {
     return (
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <div className="text-sm text-gray-300">
-            Base Account Connected
+          <div className="text-xs text-gray-300">
+            Base Account
           </div>
         </div>
         <Wallet>
@@ -117,9 +136,9 @@ export function WalletConnection() {
   // Para desarrollo fuera de Base App, mostrar botón de conexión
   if (!isBaseApp) {
     return (
-      <div className="flex items-center gap-4">
-        <div className="text-sm text-yellow-400">
-          ⚠️ Ejecutándose fuera de Base App
+      <div className="flex items-center gap-2">
+        <div className="text-xs text-yellow-400">
+          ⚠️ Dev Mode
         </div>
         <Wallet>
           <ConnectWallet>
@@ -143,12 +162,10 @@ export function WalletConnection() {
 
   // Estado de carga cuando está conectando en Base App
   return (
-    <div className="flex items-center gap-4">
-      <div className="flex items-center gap-2">
-        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-        <div className="text-sm text-gray-300">
-          Conectando Base Account...
-        </div>
+    <div className="flex items-center gap-2">
+      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+      <div className="text-xs text-gray-300">
+        Connecting...
       </div>
     </div>
   )
