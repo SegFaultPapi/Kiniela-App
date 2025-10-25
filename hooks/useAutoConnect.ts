@@ -37,11 +37,23 @@ export function useAutoConnect() {
       window.ethereum?.isBaseApp ||
       window.location.hostname.includes('base.org') || 
       window.location.hostname.includes('base.app') ||
-      window.navigator.userAgent.includes('Base')
+      window.navigator.userAgent.includes('Base') ||
+      // Detectar Base App específicamente
+      window.navigator.userAgent.includes('BaseApp') ||
+      // Detectar si estamos en un iframe de Base App
+      (window.parent !== window && window.parent.location.hostname.includes('base'))
     )
 
     if (!isBaseApp) {
       console.log('🔗 KIN-001 AC-002: Not in Base App, skipping auto-connect')
+      console.log('🔍 Base App Detection Debug:', {
+        hasEthereum: !!(window as any).ethereum,
+        isBaseAppProvider: !!(window as any).ethereum?.isBaseApp,
+        hostname: window.location.hostname,
+        userAgent: window.navigator.userAgent,
+        isIframe: window.parent !== window,
+        parentHostname: window.parent !== window ? window.parent.location.hostname : 'N/A'
+      })
       
       // SECURITY: En desarrollo, limpiar conexiones no autorizadas SOLO en primera carga
       // NO limpiar en navegación entre páginas para mantener persistencia
@@ -64,6 +76,16 @@ export function useAutoConnect() {
       }
       return
     }
+
+    console.log('✅ KIN-001 AC-002: Base App detected, attempting auto-connect')
+    console.log('🔍 Base App Detection Debug:', {
+      hasEthereum: !!(window as any).ethereum,
+      isBaseAppProvider: !!(window as any).ethereum?.isBaseApp,
+      hostname: window.location.hostname,
+      userAgent: window.navigator.userAgent,
+      isIframe: window.parent !== window,
+      parentHostname: window.parent !== window ? window.parent.location.hostname : 'N/A'
+    })
 
     // Buscar el conector de Coinbase Wallet (Base Account)
     const coinbaseConnector = connectors.find(

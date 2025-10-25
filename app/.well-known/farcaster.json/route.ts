@@ -20,10 +20,16 @@ export async function GET() {
     },
     baseBuilder: {
       allowedAddresses: ["0x1615Ad56c1F19B2394cf36496F99A29D4E21932A"],
-      smartWalletOnly: false, // Permitir tanto Smart Wallets como wallets regulares
+      smartWalletOnly: false,
       supportedChains: ["base"],
-      enableSmartWallet: true, // Habilitar Smart Wallets
-      enableRegularWallet: true, // Habilitar wallets regulares
+      enableSmartWallet: true,
+      enableRegularWallet: true,
+      enablePasskey: true, // Habilitar passkeys para Smart Wallets
+      smartWalletConfig: {
+        enableAccountAbstraction: true,
+        enablePaymaster: true,
+        enableBatchTransactions: true,
+      },
     },
     miniapp: {
       version: "1",

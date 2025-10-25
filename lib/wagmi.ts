@@ -8,10 +8,8 @@ export const config = createConfig({
     coinbaseWallet({
       appName: 'Kiniela',
       appLogoUrl: '/kiniela_logo.png',
-      preference: 'smartWalletPreferred', // Cambiar a preferred en lugar de only
-      version: '4', // Usar versión 4 del SDK para Smart Wallets
-      enableMobileWalletLink: true, // Habilitar Mobile Wallet Link
-      enableWalletLink: true, // Habilitar Wallet Link
+      preference: 'smartWalletOnly',
+      version: '4',
     }),
   ],
   transports: {
@@ -20,7 +18,6 @@ export const config = createConfig({
   },
   // AC-002: Persistencia de conexión entre sesiones
   ssr: true, // Enable server-side rendering support
-  storage: typeof window !== 'undefined' ? window.localStorage : undefined,
 })
 
 declare module 'wagmi' {
