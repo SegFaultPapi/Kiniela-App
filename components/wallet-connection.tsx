@@ -132,10 +132,14 @@ export function WalletConnection() {
     }
   }, [capabilities])
 
-  // SECURITY: Verificar que la wallet conectada es válida
+  // SECURITY: Verificar que la wallet conectada es válida (SOLO en primera conexión)
   useEffect(() => {
     if (!isMounted || !isConnected || !address) return
 
+    // Solo verificar en la primera conexión, no en cada cambio de página
+    const hasVerified = window.sessionStorage.getItem('walletVerified')
+    if (hasVerified) return // Ya verificamos esta sesión
+    
     // Si hay una wallet conectada sin user interaction y no estamos en Base App, desconectar
     if (!isBaseApp && isConnected && !isConnecting) {
       const userInitiated = window.sessionStorage.getItem('userConnectedWallet')
@@ -146,6 +150,9 @@ export function WalletConnection() {
         return
       }
     }
+    
+    // Marcar que ya verificamos esta conexión
+    window.sessionStorage.setItem('walletVerified', 'true')
   }, [isMounted, isConnected, isConnecting, address, isBaseApp, disconnect])
 
   // Logs para verificar el estado de conexión y tipo de wallet

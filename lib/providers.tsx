@@ -2,10 +2,35 @@
 
 import { OnchainKitProvider } from '@coinbase/onchainkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { WagmiProvider } from 'wagmi'
+import { WagmiProvider, useAccount, useReconnect } from 'wagmi'
 import { config } from '@/lib/wagmi'
 import { base } from 'wagmi/chains'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
+// Componente interno para manejar reconexión automática
+function ReconnectHandler({ children }: { children: React.ReactNode }) {
+  const { isConnected } = useAccount()
+  const { reconnect } = useReconnect()
+  const [hasAttemptedReconnect, setHasAttemptedReconnect] = useState(false)
+
+  useEffect(() => {
+    // Intentar reconectar automáticamente si hay datos en localStorage
+    if (!isConnected && !hasAttemptedReconnect) {
+      const wagmiStore = localStorage.getItem('wagmi.store')
+      if (wagmiStore) {
+        console.log('🔄 Attempting to reconnect wallet from cache...')
+        try {
+          reconnect()
+        } catch (error) {
+          console.log('⚠️ Reconnect failed:', error)
+        }
+        setHasAttemptedReconnect(true)
+      }
+    }
+  }, [isConnected, hasAttemptedReconnect, reconnect])
+
+  return <>{children}</>
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
@@ -20,13 +45,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiProvider config={config}>
-        <OnchainKitProvider 
-          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY} 
-          chain={base}
-        >
-          {children}
-        </OnchainKitProvider>
+      <WagmiProvider config={config} reconnectOnMount={true}>
+        <ReconnectHandler>
+          <OnchainKitProvider 
+            apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY} 
+            chain={base}
+          >
+            {children}
+          </OnchainKitProvider>
+        </ReconnectHandler>
       </WagmiProvider>
     </QueryClientProvider>
   )

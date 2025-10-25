@@ -43,18 +43,23 @@ export function useAutoConnect() {
     if (!isBaseApp) {
       console.log('🔗 KIN-001 AC-002: Not in Base App, skipping auto-connect')
       
-      // SECURITY: En desarrollo, limpiar cualquier conexión cacheada al iniciar
-      if (typeof window !== 'undefined' && window.localStorage) {
-        const recentReloads = window.sessionStorage.getItem('reloadCount')
-        if (!recentReloads) {
-          console.log('🔒 SECURITY: Cleaning cached connections on first load')
+      // SECURITY: En desarrollo, limpiar conexiones no autorizadas SOLO en primera carga
+      // NO limpiar en navegación entre páginas para mantener persistencia
+      if (typeof window !== 'undefined' && window.localStorage && !isConnected) {
+        const hasCheckedSecurity = window.sessionStorage.getItem('securityCheckDone')
+        const userInitiated = window.sessionStorage.getItem('userConnectedWallet')
+        
+        // Solo hacer limpieza si es primera visita y no hay conexión autorizada por el usuario
+        if (!hasCheckedSecurity && !userInitiated) {
+          console.log('🔒 SECURITY: First load security check')
           const wagmiKeys = Object.keys(window.localStorage).filter(key => 
             key.startsWith('wagmi.') || key.includes('wallet')
           )
           if (wagmiKeys.length > 0) {
+            console.log('🔒 SECURITY: Cleaning unauthorized cached connections')
             wagmiKeys.forEach(key => window.localStorage.removeItem(key))
-            window.sessionStorage.setItem('reloadCount', '1')
           }
+          window.sessionStorage.setItem('securityCheckDone', 'true')
         }
       }
       return
