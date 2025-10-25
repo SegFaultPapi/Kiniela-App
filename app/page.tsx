@@ -5,8 +5,10 @@ import { TrendingCard } from "@/components/trending-card"
 import { MobileLayout } from "@/components/MobileLayout"
 import { sdk } from '@farcaster/miniapp-sdk'
 import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
+  const router = useRouter()
 
   // Ensure ready() is called as soon as possible
   useEffect(() => {
@@ -358,8 +360,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">Politics</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets?category=politics')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={politicsMarkets} />
@@ -368,8 +373,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">Economy</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={economyMarkets} />
@@ -378,8 +386,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">Technology</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={technologyMarkets} />
@@ -388,8 +399,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">Entertainment</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={entertainmentMarkets} />
@@ -398,8 +412,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">Soccer</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={soccerMarkets} />
@@ -408,8 +425,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">Basketball</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={basketballMarkets} />
@@ -418,8 +438,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">Tennis</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={tennisMarkets} />
@@ -428,8 +451,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">American Football</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={footballMarkets} />
@@ -438,8 +464,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">Baseball</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={baseballMarkets} />
@@ -448,8 +477,11 @@ export default function Home() {
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-lg font-semibold text-white">Hockey</h3>
-          <button className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors">
-            See All
+          <button 
+            onClick={() => router.push('/all-markets')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
           </button>
         </div>
         <MarketCarousel markets={hockeyMarkets} />

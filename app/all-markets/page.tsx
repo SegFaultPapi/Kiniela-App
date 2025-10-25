@@ -3,8 +3,12 @@
 import { MobileLayout } from "@/components/MobileLayout"
 import { MarketCarousel } from "@/components/market-carousel"
 import { Search, Filter } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 export default function AllMarkets() {
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState("")
   // Mock data for all markets with more details
   const allMarkets = [
     {
@@ -91,6 +95,8 @@ export default function AllMarkets() {
             <input
               type="text"
               placeholder="Search markets..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -123,7 +129,10 @@ export default function AllMarkets() {
                   <span className="text-xs px-2 py-1 bg-blue-600/20 text-blue-400 rounded">{market.playerName}</span>
                   <span className="text-xs text-gray-400">{market.playerSubtext}</span>
                 </div>
-                <button className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                <button 
+                  onClick={() => router.push(`/market/${index}`)}
+                  className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                >
                   View →
                 </button>
               </div>
@@ -136,20 +145,32 @@ export default function AllMarkets() {
       <section className="mb-6">
         <h3 className="text-lg font-semibold text-white mb-3">Categories</h3>
         <div className="grid grid-cols-2 gap-3">
-          <button className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors">
-            <div className="text-white font-medium mb-1">Sports</div>
+          <button 
+            onClick={() => setSearchQuery("Sports")}
+            className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors"
+          >
+            <div className="text-white font-medium mb-1">⚽ Sports</div>
             <div className="text-sm text-gray-400">45 markets</div>
           </button>
-          <button className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors">
-            <div className="text-white font-medium mb-1">Politics</div>
+          <button 
+            onClick={() => setSearchQuery("Politics")}
+            className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors"
+          >
+            <div className="text-white font-medium mb-1">🏛️ Politics</div>
             <div className="text-sm text-gray-400">23 markets</div>
           </button>
-          <button className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors">
-            <div className="text-white font-medium mb-1">Economy</div>
+          <button 
+            onClick={() => setSearchQuery("Economy")}
+            className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors"
+          >
+            <div className="text-white font-medium mb-1">💰 Economy</div>
             <div className="text-sm text-gray-400">18 markets</div>
           </button>
-          <button className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors">
-            <div className="text-white font-medium mb-1">Technology</div>
+          <button 
+            onClick={() => setSearchQuery("Technology")}
+            className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors"
+          >
+            <div className="text-white font-medium mb-1">💻 Technology</div>
             <div className="text-sm text-gray-400">12 markets</div>
           </button>
         </div>

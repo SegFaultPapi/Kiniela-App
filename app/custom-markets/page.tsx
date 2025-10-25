@@ -3,8 +3,10 @@
 import { MobileLayout } from "@/components/MobileLayout"
 import { MarketCarousel } from "@/components/market-carousel"
 import { PlusCircle, TrendingUp, Clock } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function CustomMarkets() {
+  const router = useRouter()
   // Mock data for user's markets
   const myMarkets = [
     {
@@ -53,11 +55,17 @@ export default function CustomMarkets() {
       {/* Quick Actions */}
       <section className="mb-6">
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <button className="touch-target bg-blue-600 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-blue-500 transition-colors">
+          <button 
+            onClick={() => alert('Create market functionality coming soon!')}
+            className="touch-target bg-blue-600 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-blue-500 transition-colors"
+          >
             <PlusCircle className="w-4 h-4" />
             Create Market
           </button>
-          <button className="touch-target bg-purple-600 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-purple-500 transition-colors">
+          <button 
+            onClick={() => alert('My predictions view coming soon!')}
+            className="touch-target bg-purple-600 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-purple-500 transition-colors"
+          >
             <TrendingUp className="w-4 h-4" />
             My Predictions
           </button>
@@ -89,10 +97,16 @@ export default function CustomMarkets() {
                     <span className="text-xs text-gray-400">{market.playerSubtext}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                    <button 
+                      onClick={() => alert('Edit market functionality coming soon!')}
+                      className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                    >
                       Edit
                     </button>
-                    <button className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                    <button 
+                      onClick={() => router.push(`/market/${index}`)}
+                      className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                    >
                       View →
                     </button>
                   </div>
@@ -105,7 +119,10 @@ export default function CustomMarkets() {
             <PlusCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
             <h4 className="text-white font-medium mb-2">No markets created yet</h4>
             <p className="text-sm text-gray-400 mb-4">Create your first prediction market</p>
-            <button className="touch-target bg-blue-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-blue-500 transition-colors">
+            <button 
+              onClick={() => alert('Create market functionality coming soon!')}
+              className="touch-target bg-blue-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-blue-500 transition-colors"
+            >
               Create Market
             </button>
           </div>
@@ -136,7 +153,10 @@ export default function CustomMarkets() {
                     <span className="text-xs px-2 py-1 bg-purple-600/20 text-purple-400 rounded">My Prediction</span>
                     <span className="text-xs text-gray-400">{market.playerSubtext}</span>
                   </div>
-                  <button className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                  <button 
+                    onClick={() => router.push(`/market/${index}`)}
+                    className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                  >
                     View →
                   </button>
                 </div>
@@ -148,7 +168,10 @@ export default function CustomMarkets() {
             <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-3" />
             <h4 className="text-white font-medium mb-2">No predictions yet</h4>
             <p className="text-sm text-gray-400 mb-4">Start predicting on markets</p>
-            <button className="touch-target bg-purple-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-purple-500 transition-colors">
+            <button 
+              onClick={() => router.push('/all-markets')}
+              className="touch-target bg-purple-600 text-white rounded-lg px-4 py-2 text-sm hover:bg-purple-500 transition-colors"
+            >
               Browse Markets
             </button>
           </div>

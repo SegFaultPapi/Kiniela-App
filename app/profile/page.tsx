@@ -2,8 +2,11 @@
 
 import { MobileLayout } from "@/components/MobileLayout"
 import { User, Settings, Bell, HelpCircle, LogOut } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function Profile() {
+  const router = useRouter()
+  
   return (
     <MobileLayout title="Profile" activeTab="profile">
       {/* User Info Section */}
@@ -52,7 +55,10 @@ export default function Profile() {
       <section className="mb-6">
         <h3 className="text-lg font-semibold text-white mb-3">Settings</h3>
         <div className="space-y-2">
-          <button className="w-full touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
+          <button 
+            onClick={() => alert('Settings functionality coming soon!')}
+            className="w-full touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors"
+          >
             <div className="flex items-center gap-3">
               <Settings className="w-5 h-5 text-gray-400" />
               <span className="text-white">General Settings</span>
@@ -60,7 +66,10 @@ export default function Profile() {
             <div className="text-gray-400">›</div>
           </button>
           
-          <button className="w-full touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
+          <button 
+            onClick={() => alert('Notifications functionality coming soon!')}
+            className="w-full touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors"
+          >
             <div className="flex items-center gap-3">
               <Bell className="w-5 h-5 text-gray-400" />
               <span className="text-white">Notifications</span>
@@ -68,7 +77,10 @@ export default function Profile() {
             <div className="text-gray-400">›</div>
           </button>
           
-          <button className="w-full touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors">
+          <button 
+            onClick={() => alert('Help & Support functionality coming soon!')}
+            className="w-full touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-700 transition-colors"
+          >
             <div className="flex items-center gap-3">
               <HelpCircle className="w-5 h-5 text-gray-400" />
               <span className="text-white">Help & Support</span>
@@ -80,7 +92,10 @@ export default function Profile() {
 
       {/* Logout Section */}
       <section className="mb-6">
-        <button className="w-full touch-target bg-red-600 text-white rounded-lg p-4 flex items-center justify-center gap-3 hover:bg-red-500 transition-colors">
+        <button 
+          onClick={() => alert('Wallet disconnection functionality coming soon!')}
+          className="w-full touch-target bg-red-600 text-white rounded-lg p-4 flex items-center justify-center gap-3 hover:bg-red-500 transition-colors"
+        >
           <LogOut className="w-5 h-5" />
           <span>Disconnect Wallet</span>
         </button>

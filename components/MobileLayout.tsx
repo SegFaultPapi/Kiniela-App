@@ -2,6 +2,7 @@
 
 import { Star, List, User, PlusCircle } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { WalletConnection } from "@/components/wallet-connection"
 
 interface MobileLayoutProps {
@@ -17,11 +18,18 @@ export function MobileLayout({
   showQuickActions = false,
   activeTab = 'featured'
 }: MobileLayoutProps) {
+  const router = useRouter()
+
   return (
     <div className="min-h-screen bg-[#1a2332] pb-20 safe-area-top">
       {/* Header - Consistent across all pages */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#1a2332] sticky top-0 z-40">
-        <div className="w-10" />
+        <button 
+          onClick={() => router.push('/')}
+          className="w-10 h-10 flex items-center justify-center hover:bg-gray-800 rounded-lg transition-colors"
+        >
+          <span className="text-2xl">🎯</span>
+        </button>
         <h1 className="text-lg font-semibold text-white">{title}</h1>
         <WalletConnection />
       </header>
@@ -32,11 +40,17 @@ export function MobileLayout({
         {showQuickActions && (
           <section className="mb-6">
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <button className="touch-target bg-blue-600 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-blue-500 transition-colors">
+              <button 
+                onClick={() => router.push('/custom-markets')}
+                className="touch-target bg-blue-600 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-blue-500 transition-colors"
+              >
                 <PlusCircle className="w-4 h-4" />
                 Create Market
               </button>
-              <button className="touch-target bg-purple-600 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-purple-500 transition-colors">
+              <button 
+                onClick={() => router.push('/custom-markets')}
+                className="touch-target bg-purple-600 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-purple-500 transition-colors"
+              >
                 <Star className="w-4 h-4" />
                 My Predictions
               </button>

@@ -106,57 +106,47 @@ export function WalletConnection() {
   // Si estamos en Base App y conectados, mostrar información de Base Account
   if (isBaseApp && isConnected && baseAccountCapabilities) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <div className="text-xs text-gray-300">
-            Base Account
+      <Wallet>
+        <ConnectWallet>
+          <div className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-600/50 transition-all duration-200 hover:border-blue-500/50">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <Avatar className="h-6 w-6" />
+            <Name />
           </div>
-        </div>
-        <Wallet>
-          <ConnectWallet>
-            <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6" />
-              <Name />
-            </div>
-          </ConnectWallet>
-          <WalletDropdown>
-            <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-              <Avatar />
-              <Name />
-              <Address />
-            </Identity>
-            <WalletDropdownDisconnect />
-          </WalletDropdown>
-        </Wallet>
-      </div>
+        </ConnectWallet>
+        <WalletDropdown>
+          <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+            <Avatar />
+            <Name />
+            <Address />
+          </Identity>
+          <WalletDropdownDisconnect />
+        </WalletDropdown>
+      </Wallet>
     )
   }
 
   // Para desarrollo fuera de Base App, mostrar botón de conexión
   if (!isBaseApp) {
     return (
-      <div className="flex items-center gap-2">
-        <div className="text-xs text-yellow-400">
-          ⚠️ Dev Mode
-        </div>
-        <Wallet>
-          <ConnectWallet>
-            <div className="flex items-center gap-2">
-              <Avatar className="h-6 w-6" />
-              <Name />
+      <Wallet>
+        <ConnectWallet>
+          <button className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center gap-2 shadow-lg hover:shadow-blue-500/25 hover:scale-105">
+            <div className="w-4 h-4 bg-white/20 rounded-full flex items-center justify-center">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
             </div>
-          </ConnectWallet>
-          <WalletDropdown>
-            <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-              <Avatar />
-              <Name />
-              <Address />
-            </Identity>
-            <WalletDropdownDisconnect />
-          </WalletDropdown>
-        </Wallet>
-      </div>
+            Connect Wallet
+          </button>
+        </ConnectWallet>
+        <WalletDropdown>
+          <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+            <Avatar />
+            <Name />
+            <Address />
+          </Identity>
+          <WalletDropdownDisconnect />
+        </WalletDropdown>
+      </Wallet>
     )
   }
 
