@@ -14,7 +14,7 @@ interface Market {
 
 const featuredMarkets: Market[] = [
   {
-    image: "/placeholder.svg?height=400&width=400",
+    image: "/kiniela_logo.png",
     percentage: 73,
     title: "Will Bitcoin reach $150,000 by end of 2025?",
     volume: "2.8M",
@@ -23,7 +23,7 @@ const featuredMarkets: Market[] = [
       "Market predicting if Bitcoin will surpass $150,000 USD by December 31, 2025, based on current market trends and institutional adoption.",
   },
   {
-    image: "/placeholder.svg?height=400&width=400",
+    image: "/kiniela_logo.png",
     percentage: 68,
     title: "Will AGI be achieved by 2030?",
     volume: "1.9M",
@@ -32,7 +32,7 @@ const featuredMarkets: Market[] = [
       "Prediction market on whether Artificial General Intelligence will be successfully demonstrated by major tech companies before 2030.",
   },
   {
-    image: "/placeholder.svg?height=400&width=400",
+    image: "/kiniela_logo.png",
     percentage: 81,
     title: "Will renewable energy exceed 50% of global production by 2028?",
     volume: "1.5M",
@@ -69,7 +69,7 @@ export function TrendingCard() {
           className={`relative aspect-[4/3] transition-opacity duration-500 ease-in-out ${isTransitioning ? "opacity-0" : "opacity-100"}`}
         >
           <img
-            src={currentMarket.image || "/placeholder.svg"}
+            src={currentMarket.image || "/kiniela_logo.png"}
             alt={currentMarket.title}
             className="w-full h-full object-cover"
           />

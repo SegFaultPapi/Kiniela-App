@@ -25,7 +25,7 @@ export async function GET() {
       version: "1",
       name: "Kiniela",
       homeUrl: `${URL}`,
-      iconUrl: `${URL}/icon.png`,
+      iconUrl: `${URL}/kiniela_logo.png`,
       splashImageUrl: `${URL}/splash.png`,
       splashBackgroundColor: "#000000",
       webhookUrl: `${URL}/api/webhook`,

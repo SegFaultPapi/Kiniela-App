@@ -62,7 +62,7 @@ const generateMockMarkets = (page: number, limit: number): FeedResponse => {
       subcategory: "Football",
       status: 'closing_soon',
       lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/kiniela_logo.png",
       totalBets: 142
     },
     {
@@ -76,7 +76,7 @@ const generateMockMarkets = (page: number, limit: number): FeedResponse => {
       subcategory: "Bitcoin",
       status: 'active',
       lastBetAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/kiniela_logo.png",
       totalBets: 289
     },
     {
@@ -90,7 +90,7 @@ const generateMockMarkets = (page: number, limit: number): FeedResponse => {
       subcategory: "Elections",
       status: 'active',
       lastBetAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
-      image: "/placeholder.svg?height=100&width=100",
+      image: "/kiniela_logo.png",
       totalBets: 87
     },
     // Add more markets as needed...

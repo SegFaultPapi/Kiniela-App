@@ -10,7 +10,7 @@ export default function CustomMarkets() {
   // Mock data for user's markets
   const myMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 68,
       title: "My Custom Market 1",
       volume: "2.5k",
@@ -19,7 +19,7 @@ export default function CustomMarkets() {
       isTactical: false
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 72,
       title: "My Custom Market 2",
       volume: "1.8k",
@@ -31,7 +31,7 @@ export default function CustomMarkets() {
 
   const myPredictions = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 65,
       title: "Prediction Market 1",
       volume: "5.2k",
@@ -40,7 +40,7 @@ export default function CustomMarkets() {
       isTactical: false
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 58,
       title: "Prediction Market 2",
       volume: "3.1k",

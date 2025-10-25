@@ -33,7 +33,7 @@ export function MarketCard({
         className="relative rounded-xl overflow-hidden mb-2 aspect-[4/3] group cursor-pointer active:scale-95 transition-transform"
         onClick={onClick}
       >
-        <img src={image || "/placeholder.svg"} alt={title} className="w-full h-full object-cover" />
+        <img src={image || "/kiniela_logo.png"} alt={title} className="w-full h-full object-cover" />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 

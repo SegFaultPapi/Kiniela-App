@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
     other: {
       'fc:miniapp': JSON.stringify({
         version: '1',
-        imageUrl: `${URL}/icon.png`,
+        imageUrl: `${URL}/kiniela_logo.png`,
         button: {
           title: 'Launch Kiniela',
           action: {
@@ -27,6 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
           },
         },
       }),
+      'base:manifest': `${URL}/.well-known/farcaster.json`,
     },
   };
 }

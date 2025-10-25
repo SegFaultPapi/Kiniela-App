@@ -7,7 +7,7 @@ export const config = createConfig({
   connectors: [
     coinbaseWallet({
       appName: 'Kiniela',
-      appLogoUrl: '/icon.png',
+      appLogoUrl: '/kiniela_logo.png',
       preference: 'smartWalletOnly', // Priorizar Smart Wallets de Base
       version: '4', // Usar versión 4 del SDK para Smart Wallets
     }),

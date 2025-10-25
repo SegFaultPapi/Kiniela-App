@@ -52,7 +52,7 @@ const MOCK_CLAIMABLE_POSITIONS: ClaimablePosition[] = [
     resolution: 'yes',
     userSide: 'yes',
     resolvedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-    marketImage: "/placeholder.svg?height=100&width=100"
+    marketImage: "/kiniela_logo.png"
   },
   {
     marketId: "soccer-1",
@@ -66,7 +66,7 @@ const MOCK_CLAIMABLE_POSITIONS: ClaimablePosition[] = [
     resolution: 'yes',
     userSide: 'yes',
     resolvedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
-    marketImage: "/placeholder.svg?height=100&width=100"
+    marketImage: "/kiniela_logo.png"
   }
 ]
 
@@ -78,7 +78,7 @@ const MOCK_CLAIM_HISTORY: ClaimHistory[] = [
     amount: 156.20,
     claimedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days ago
     transactionHash: "0x1234...5678",
-    marketImage: "/placeholder.svg?height=100&width=100"
+    marketImage: "/kiniela_logo.png"
   },
   {
     id: "claim-2",
@@ -87,7 +87,7 @@ const MOCK_CLAIM_HISTORY: ClaimHistory[] = [
     amount: 89.45,
     claimedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days ago
     transactionHash: "0x5678...9abc",
-    marketImage: "/placeholder.svg?height=100&width=100"
+    marketImage: "/kiniela_logo.png"
   }
 ]
 

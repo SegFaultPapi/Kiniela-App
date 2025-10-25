@@ -28,7 +28,11 @@ export function MobileLayout({
           onClick={() => router.push('/')}
           className="w-10 h-10 flex items-center justify-center hover:bg-gray-800 rounded-lg transition-colors"
         >
-          <span className="text-2xl">🎯</span>
+          <img 
+            src="/kiniela_logo.png" 
+            alt="Kiniela" 
+            className="w-8 h-8 object-contain"
+          />
         </button>
         <h1 className="text-lg font-semibold text-white">{title}</h1>
         <WalletConnection />

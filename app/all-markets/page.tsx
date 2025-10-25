@@ -58,7 +58,7 @@ export default function AllMarkets() {
       subcategory: "Football",
       lastBetAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
       status: 'closing_soon',
-      image: "/placeholder.svg?height=100&width=100"
+      image: "/kiniela_logo.png"
     },
     {
       id: "2",
@@ -71,7 +71,7 @@ export default function AllMarkets() {
       subcategory: "Football",
       lastBetAt: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
       status: 'active',
-      image: "/placeholder.svg?height=100&width=100"
+      image: "/kiniela_logo.png"
     },
     {
       id: "3",
@@ -84,7 +84,7 @@ export default function AllMarkets() {
       subcategory: "Football",
       lastBetAt: new Date(Date.now() - 3 * 60 * 1000).toISOString(),
       status: 'active',
-      image: "/placeholder.svg?height=100&width=100"
+      image: "/kiniela_logo.png"
     },
     {
       id: "4",
@@ -97,7 +97,7 @@ export default function AllMarkets() {
       subcategory: "Football",
       lastBetAt: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
       status: 'active',
-      image: "/placeholder.svg?height=100&width=100"
+      image: "/kiniela_logo.png"
     },
     {
       id: "5",
@@ -110,7 +110,7 @@ export default function AllMarkets() {
       subcategory: "Football",
       lastBetAt: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
       status: 'active',
-      image: "/placeholder.svg?height=100&width=100"
+      image: "/kiniela_logo.png"
     },
     {
       id: "6",
@@ -123,7 +123,7 @@ export default function AllMarkets() {
       subcategory: "Elections",
       lastBetAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
       status: 'active',
-      image: "/placeholder.svg?height=100&width=100"
+      image: "/kiniela_logo.png"
     },
     {
       id: "7",
@@ -136,7 +136,7 @@ export default function AllMarkets() {
       subcategory: "Stocks",
       lastBetAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
       status: 'active',
-      image: "/placeholder.svg?height=100&width=100"
+      image: "/kiniela_logo.png"
     },
     {
       id: "8",
@@ -149,7 +149,7 @@ export default function AllMarkets() {
       subcategory: "AI",
       lastBetAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
       status: 'active',
-      image: "/placeholder.svg?height=100&width=100"
+      image: "/kiniela_logo.png"
     },
   ]
 

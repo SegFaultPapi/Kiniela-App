@@ -39,7 +39,7 @@ export default function Home() {
   const soccerMarkets: FeaturedMarket[] = [
     {
       id: "soccer-1",
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 72,
       title: "Will Argentina win Copa América 2026?",
       volume: "45.2k",
@@ -54,7 +54,7 @@ export default function Home() {
     },
     {
       id: "soccer-2",
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 58,
       title: "Will Messi score 20+ goals in MLS 2026?",
       volume: "28.7k",
@@ -70,7 +70,7 @@ export default function Home() {
     },
     {
       id: "soccer-3",
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 65,
       title: "Will Real Madrid win Champions League 2026?",
       volume: "67.3k",
@@ -85,7 +85,7 @@ export default function Home() {
     },
     {
       id: "soccer-4",
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 41,
       title: "Will Manchester City win Premier League 2026?",
       volume: "34.1k",
@@ -100,7 +100,7 @@ export default function Home() {
     },
     {
       id: "soccer-5",
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 78,
       title: "Will Brazil reach World Cup 2026 final?",
       volume: "52.8k",
@@ -117,31 +117,31 @@ export default function Home() {
 
   const basketballMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 68,
       title: "Will Lakers win NBA Championship 2026?",
       volume: "23.4k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 45,
       title: "Will LeBron James retire in 2026?",
       volume: "18.7k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 72,
       title: "Will Warriors make playoffs 2026?",
       volume: "15.2k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 58,
       title: "Will Celtics win Eastern Conference 2026?",
       volume: "19.8k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 67,
       title: "76ers vs. Knicks",
       volume: "7.1k",
@@ -150,31 +150,31 @@ export default function Home() {
 
   const tennisMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 51,
       title: "Serena Williams vs. Naomi Osaka",
       volume: "5.7k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 48,
       title: "Federer vs. Nadal",
       volume: "9.8k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 54,
       title: "Djokovic vs. Murray",
       volume: "8.4k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 62,
       title: "Alcaraz vs. Medvedev",
       volume: "6.9k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 56,
       title: "Swiatek vs. Sabalenka",
       volume: "5.3k",
@@ -183,31 +183,31 @@ export default function Home() {
 
   const footballMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 64,
       title: "Chiefs vs. Bills",
       volume: "11.2k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 58,
       title: "Cowboys vs. Eagles",
       volume: "10.5k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 71,
       title: "49ers vs. Rams",
       volume: "9.7k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 66,
       title: "Packers vs. Vikings",
       volume: "8.9k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 59,
       title: "Patriots vs. Dolphins",
       volume: "8.3k",
@@ -216,31 +216,31 @@ export default function Home() {
 
   const baseballMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 52,
       title: "Yankees vs. Red Sox",
       volume: "7.8k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 61,
       title: "Dodgers vs. Giants",
       volume: "7.2k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 57,
       title: "Astros vs. Rangers",
       volume: "6.5k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 63,
       title: "Braves vs. Mets",
       volume: "6.1k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 55,
       title: "Cubs vs. Cardinals",
       volume: "5.9k",
@@ -249,31 +249,31 @@ export default function Home() {
 
   const hockeyMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 68,
       title: "Maple Leafs vs. Canadiens",
       volume: "6.8k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 54,
       title: "Rangers vs. Bruins",
       volume: "6.3k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 62,
       title: "Penguins vs. Capitals",
       volume: "5.7k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 59,
       title: "Lightning vs. Panthers",
       volume: "5.4k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 65,
       title: "Avalanche vs. Golden Knights",
       volume: "5.1k",
@@ -282,31 +282,31 @@ export default function Home() {
 
   const politicsMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 48,
       title: "Will Trump win 2026 election?",
       volume: "18.5k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 65,
       title: "Will Republicans control Senate after 2026?",
       volume: "15.2k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 42,
       title: "Will Supreme Court expand in 2026?",
       volume: "12.8k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 67,
       title: "Will EU pass new AI regulation in 2026?",
       volume: "9.3k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 54,
       title: "Will UN Security Council reform in 2026?",
       volume: "7.6k",
@@ -315,31 +315,31 @@ export default function Home() {
 
   const economyMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 67,
       title: "Will S&P 500 reach 7000 by end of 2026?",
       volume: "22.4k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 73,
       title: "Will Fed cut rates in Q2 2026?",
       volume: "19.7k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 59,
       title: "Will Bitcoin reach $150k in 2026?",
       volume: "16.9k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 52,
       title: "Will oil prices exceed $120/barrel in 2026?",
       volume: "14.3k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 64,
       title: "Will US inflation stay below 2% in 2026?",
       volume: "13.1k",
@@ -348,31 +348,31 @@ export default function Home() {
 
   const entertainmentMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 71,
       title: "Oppenheimer wins Best Picture?",
       volume: "11.8k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 68,
       title: "Taylor Swift wins Album of Year?",
       volume: "10.5k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 55,
       title: "Dune 2 grosses over $500M?",
       volume: "9.2k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 62,
       title: "Netflix gains 10M+ subscribers?",
       volume: "8.7k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 58,
       title: "Will GTA 6 release in 2026?",
       volume: "15.4k",
@@ -381,31 +381,31 @@ export default function Home() {
 
   const technologyMarkets = [
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 76,
       title: "Will GPT-6 launch in 2026?",
       volume: "20.3k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 69,
       title: "Apple releases foldable iPhone?",
       volume: "17.6k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 54,
       title: "Tesla Cybertruck sells 100k units?",
       volume: "14.9k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 61,
       title: "Will SpaceX reach Mars in 2026?",
       volume: "12.2k",
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
+      image: "/kiniela_logo.png",
       percentage: 48,
       title: "Quantum computing breakthrough?",
       volume: "9.8k",
