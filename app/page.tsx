@@ -283,32 +283,32 @@ export default function Home() {
   const politicsMarkets = [
     {
       image: "/placeholder.svg?height=400&width=600",
-      percentage: 62,
-      title: "Will Biden win 2024 election?",
+      percentage: 48,
+      title: "Will Trump win 2026 election?",
       volume: "18.5k",
     },
     {
       image: "/placeholder.svg?height=400&width=600",
-      percentage: 58,
-      title: "Democrats control Senate after 2024?",
+      percentage: 65,
+      title: "Will Republicans control Senate after 2026?",
       volume: "15.2k",
     },
     {
       image: "/placeholder.svg?height=400&width=600",
-      percentage: 71,
-      title: "Supreme Court expands in 2024?",
+      percentage: 42,
+      title: "Will Supreme Court expand in 2026?",
       volume: "12.8k",
     },
     {
       image: "/placeholder.svg?height=400&width=600",
-      percentage: 54,
-      title: "EU passes new climate law?",
+      percentage: 67,
+      title: "Will EU pass new AI regulation in 2026?",
       volume: "9.3k",
     },
     {
       image: "/placeholder.svg?height=400&width=600",
-      percentage: 48,
-      title: "UN Security Council reform?",
+      percentage: 54,
+      title: "Will UN Security Council reform in 2026?",
       volume: "7.6k",
     },
   ]
@@ -317,31 +317,31 @@ export default function Home() {
     {
       image: "/placeholder.svg?height=400&width=600",
       percentage: 67,
-      title: "S&P 500 reaches 6000 by year end?",
+      title: "Will S&P 500 reach 7000 by end of 2026?",
       volume: "22.4k",
     },
     {
       image: "/placeholder.svg?height=400&width=600",
       percentage: 73,
-      title: "Fed cuts rates in Q2 2024?",
+      title: "Will Fed cut rates in Q2 2026?",
       volume: "19.7k",
     },
     {
       image: "/placeholder.svg?height=400&width=600",
       percentage: 59,
-      title: "Bitcoin above $100k in 2024?",
+      title: "Will Bitcoin reach $150k in 2026?",
       volume: "16.9k",
     },
     {
       image: "/placeholder.svg?height=400&width=600",
       percentage: 52,
-      title: "Oil prices exceed $100/barrel?",
+      title: "Will oil prices exceed $120/barrel in 2026?",
       volume: "14.3k",
     },
     {
       image: "/placeholder.svg?height=400&width=600",
       percentage: 64,
-      title: "US inflation below 2% by Q4?",
+      title: "Will US inflation stay below 2% in 2026?",
       volume: "13.1k",
     },
   ]
@@ -374,7 +374,7 @@ export default function Home() {
     {
       image: "/placeholder.svg?height=400&width=600",
       percentage: 58,
-      title: "GTA 6 releases in 2024?",
+      title: "Will GTA 6 release in 2026?",
       volume: "15.4k",
     },
   ]
@@ -383,7 +383,7 @@ export default function Home() {
     {
       image: "/placeholder.svg?height=400&width=600",
       percentage: 76,
-      title: "GPT-5 launches in 2024?",
+      title: "Will GPT-6 launch in 2026?",
       volume: "20.3k",
     },
     {
@@ -401,7 +401,7 @@ export default function Home() {
     {
       image: "/placeholder.svg?height=400&width=600",
       percentage: 61,
-      title: "SpaceX reaches Mars in 2024?",
+      title: "Will SpaceX reach Mars in 2026?",
       volume: "12.2k",
     },
     {
