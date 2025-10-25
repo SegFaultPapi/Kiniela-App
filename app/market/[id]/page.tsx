@@ -6,57 +6,169 @@ import { ArrowLeft, Clock, Users, TrendingUp, Share2 } from "lucide-react"
 import { formatUSDC, formatTimeRemaining, isClosingSoon } from "@/lib/market-utils"
 import { useState, useMemo } from "react"
 
-// Market data type - unificado para Featured y All Markets
+// KIN-003: Utility functions for market detail formatting
+function formatDateTime(dateString: string): string {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  })
+}
+
+function formatTimeAgo(dateString: string): string {
+  const now = new Date().getTime()
+  const date = new Date(dateString).getTime()
+  const diff = now - date
+  
+  const minutes = Math.floor(diff / (1000 * 60))
+  const hours = Math.floor(diff / (1000 * 60 * 60))
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  
+  if (minutes < 1) return 'Just now'
+  if (minutes < 60) return `${minutes}m ago`
+  if (hours < 24) return `${hours}h ago`
+  return `${days}d ago`
+}
+
+function copyToClipboard(text: string) {
+  navigator.clipboard.writeText(text)
+  // In a real app, you'd show a toast notification
+  console.log('Copied to clipboard:', text)
+}
+
+// Market data type - KIN-003: Complete market detail interface
 interface MarketDetail {
   id: string
   title: string
-  description?: string
+  description: string // AC-001: Complete description (max 500 chars)
   image?: string
   yesPercent: number
   noPercent: number
   poolTotal: number
   closesAt: string
+  createdAt: string // AC-001: Creation timestamp
   category: string
   subcategory?: string
   status: 'active' | 'closing_soon' | 'closed' | 'resolved'
-  createdBy?: string
+  createdBy: string // AC-001: Creator address (truncated)
   totalBets?: number
+  uniqueBettors: number // AC-004: Unique bettors count
   lastBetAt: string
+  recentActivity: BetActivity[] // AC-004: Recent betting activity
 }
 
-// Mock data - en producción vendría de API
+// AC-004: Bet activity interface
+interface BetActivity {
+  user: string // truncated address
+  amount: number
+  side: 'yes' | 'no'
+  timestamp: string
+}
+
+// Mock data - KIN-003: Complete market detail data
 const MOCK_MARKETS: Record<string, MarketDetail> = {
   "1": {
     id: "1",
     title: "Will Real Madrid beat FC Barcelona?",
-    description: "Prediction about the outcome of the Spanish classic. The winner will be determined by the official result at the end of regular time (90 minutes + added time).",
+    description: "Prediction about the outcome of the Spanish classic. The winner will be determined by the official result at the end of regular time (90 minutes + added time). This includes any penalties or extra time if applicable. The market will resolve based on the official match result from the league's official source.",
     image: "/placeholder.svg?height=400&width=600",
     yesPercent: 68,
     noPercent: 32,
     poolTotal: 12500,
     closesAt: new Date(Date.now() + 1.5 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
     category: "Sports",
     subcategory: "Football",
     status: 'closing_soon',
     createdBy: "0x1234...5678",
     totalBets: 142,
-    lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString()
+    uniqueBettors: 89,
+    lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+    recentActivity: [
+      {
+        user: "0x4567...8901",
+        amount: 150,
+        side: 'yes',
+        timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString()
+      },
+      {
+        user: "0x2345...6789",
+        amount: 75,
+        side: 'no',
+        timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString()
+      },
+      {
+        user: "0x7890...1234",
+        amount: 200,
+        side: 'yes',
+        timestamp: new Date(Date.now() - 8 * 60 * 1000).toISOString()
+      },
+      {
+        user: "0x3456...7890",
+        amount: 100,
+        side: 'no',
+        timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString()
+      },
+      {
+        user: "0x5678...9012",
+        amount: 300,
+        side: 'yes',
+        timestamp: new Date(Date.now() - 15 * 60 * 1000).toISOString()
+      }
+    ]
   },
   "soccer-1": {
     id: "soccer-1",
     title: "Real Madrid vs. FC Barcelona",
-    description: "Prediction about the outcome of the Spanish classic. The winner will be determined by the official result at the end of regular time.",
+    description: "Prediction about the outcome of the Spanish classic. The winner will be determined by the official result at the end of regular time. This market focuses on the main result excluding penalties.",
     image: "/placeholder.svg?height=400&width=600",
     yesPercent: 68,
     noPercent: 32,
     poolTotal: 12500,
     closesAt: new Date(Date.now() + 5 * 60 * 60 * 1000).toISOString(),
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
     category: "Sports",
     subcategory: "Football",
     status: 'active',
     createdBy: "0x1234...5678",
     totalBets: 156,
-    lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString()
+    uniqueBettors: 95,
+    lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+    recentActivity: [
+      {
+        user: "0x1111...2222",
+        amount: 250,
+        side: 'yes',
+        timestamp: new Date(Date.now() - 3 * 60 * 1000).toISOString()
+      },
+      {
+        user: "0x3333...4444",
+        amount: 125,
+        side: 'no',
+        timestamp: new Date(Date.now() - 7 * 60 * 1000).toISOString()
+      },
+      {
+        user: "0x5555...6666",
+        amount: 180,
+        side: 'yes',
+        timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString()
+      },
+      {
+        user: "0x7777...8888",
+        amount: 90,
+        side: 'no',
+        timestamp: new Date(Date.now() - 14 * 60 * 1000).toISOString()
+      },
+      {
+        user: "0x9999...0000",
+        amount: 400,
+        side: 'yes',
+        timestamp: new Date(Date.now() - 18 * 60 * 1000).toISOString()
+      }
+    ]
   }
 }
 
@@ -67,6 +179,7 @@ export default function MarketDetailPage() {
   
   const [betAmount, setBetAmount] = useState("")
   const [selectedOption, setSelectedOption] = useState<'yes' | 'no' | null>(null)
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   
   // Get market data
   const market = MOCK_MARKETS[marketId] || MOCK_MARKETS["1"]
@@ -109,25 +222,63 @@ export default function MarketDetailPage() {
           <ArrowLeft className="w-5 h-5 text-white" />
         </button>
         
-        {/* Share button */}
+        {/* AC-004: Share button */}
         <button
+          onClick={() => {
+            if (navigator.share) {
+              navigator.share({
+                title: market.title,
+                text: `Check out this prediction market: ${market.title}`,
+                url: window.location.href
+              })
+            } else {
+              // Fallback: copy URL to clipboard
+              copyToClipboard(window.location.href)
+            }
+          }}
           className="absolute top-4 right-4 w-10 h-10 bg-gray-900/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-gray-800 transition-colors"
         >
           <Share2 className="w-5 h-5 text-white" />
         </button>
       </div>
 
-      {/* Market Title */}
+      {/* AC-001: Market Title and Description */}
       <section className="mb-6">
-        <h1 className="text-2xl font-bold text-white mb-2">{market.title}</h1>
-        {market.description && (
-          <p className="text-gray-400 text-sm leading-relaxed">{market.description}</p>
-        )}
+        <h1 className="text-2xl font-bold text-white mb-3">{market.title}</h1>
+        
+        {/* AC-001: Expandable description (max 500 chars) */}
+        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+          <p className="text-gray-300 text-sm leading-relaxed">
+            {market.description.length > 200 && !isDescriptionExpanded ? (
+              <>
+                {market.description.slice(0, 200)}...
+                <button 
+                  onClick={() => setIsDescriptionExpanded(true)}
+                  className="text-blue-400 hover:text-blue-300 ml-1 font-medium"
+                >
+                  Read more
+                </button>
+              </>
+            ) : (
+              <>
+                {market.description}
+                {market.description.length > 200 && isDescriptionExpanded && (
+                  <button 
+                    onClick={() => setIsDescriptionExpanded(false)}
+                    className="text-blue-400 hover:text-blue-300 ml-1 font-medium"
+                  >
+                    Show less
+                  </button>
+                )}
+              </>
+            )}
+          </p>
+        </div>
       </section>
 
-      {/* Market Stats */}
+      {/* AC-001 & AC-004: Market Stats */}
       <section className="mb-6">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
             <div className="flex items-center gap-2 mb-1">
               <TrendingUp className="w-4 h-4 text-blue-400" />
@@ -139,32 +290,87 @@ export default function MarketDetailPage() {
           <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
             <div className="flex items-center gap-2 mb-1">
               <Users className="w-4 h-4 text-green-400" />
-              <span className="text-xs text-gray-400">Bets</span>
+              <span className="text-xs text-gray-400">Bettors</span>
             </div>
-            <div className="text-lg font-bold text-white">{market.totalBets || 0}</div>
+            <div className="text-lg font-bold text-white">{market.uniqueBettors}</div>
           </div>
-          
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3">
           <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
             <div className="flex items-center gap-2 mb-1">
               <Clock className={`w-4 h-4 ${isClosing ? 'text-yellow-400' : 'text-gray-400'}`} />
               <span className="text-xs text-gray-400">Closes</span>
             </div>
             <div className={`text-lg font-bold ${isClosing ? 'text-yellow-400' : 'text-white'}`}>
-              {timeRemaining}
+              {formatDateTime(market.closesAt)}
             </div>
+            <div className="text-xs text-gray-500">{timeRemaining} remaining</div>
+          </div>
+          
+          <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs text-gray-400">Created</span>
+            </div>
+            <div className="text-lg font-bold text-white">{formatDateTime(market.createdAt)}</div>
+            <div className="text-xs text-gray-500">{formatTimeAgo(market.createdAt)}</div>
           </div>
         </div>
       </section>
 
-      {/* Current Odds */}
+      {/* AC-002: Enhanced Odds Visualization */}
       <section className="mb-6">
         <h3 className="text-lg font-semibold text-white mb-3">Current Odds</h3>
-        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-green-400 font-bold text-xl">YES {market.yesPercent}%</span>
-            <span className="text-red-400 font-bold text-xl">NO {market.noPercent}%</span>
+        <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+          {/* AC-002: Prominent odds display */}
+          <div className="flex justify-center items-center mb-6">
+            <div className="relative w-32 h-32">
+              {/* Circular progress background */}
+              <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  fill="none"
+                  stroke="rgb(55, 65, 81)"
+                  strokeWidth="8"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="45"
+                  fill="none"
+                  stroke="rgb(34, 197, 94)"
+                  strokeWidth="8"
+                  strokeDasharray={`${(market.yesPercent / 100) * 283} 283`}
+                  strokeLinecap="round"
+                  className="transition-all duration-500"
+                />
+              </svg>
+              {/* Center text */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-400">{market.yesPercent}%</div>
+                  <div className="text-xs text-gray-400">YES</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="w-full h-3 bg-gray-700 rounded-full overflow-hidden flex">
+          
+          {/* AC-002: Detailed breakdown */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-400">{market.yesPercent}%</div>
+              <div className="text-sm text-gray-400">YES</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-400">{market.noPercent}%</div>
+              <div className="text-sm text-gray-400">NO</div>
+            </div>
+          </div>
+          
+          {/* AC-002: Pool distribution */}
+          <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden flex">
             <div 
               className="bg-green-500 transition-all duration-300" 
               style={{ width: `${market.yesPercent}%` }}
@@ -174,6 +380,12 @@ export default function MarketDetailPage() {
               style={{ width: `${market.noPercent}%` }}
             ></div>
           </div>
+          
+          {/* AC-002: Pool total display */}
+          <div className="text-center mt-3">
+            <span className="text-gray-400 text-sm">Pool Total: </span>
+            <span className="text-white font-bold">{formatUSDC(market.poolTotal)}</span>
+          </div>
         </div>
       </section>
 
@@ -181,30 +393,36 @@ export default function MarketDetailPage() {
       <section className="mb-6">
         <h3 className="text-lg font-semibold text-white mb-3">Place Your Bet</h3>
         
-        {/* Option Selection */}
+        {/* AC-003: Prominent betting buttons */}
         <div className="grid grid-cols-2 gap-3 mb-4">
           <button
             onClick={() => setSelectedOption('yes')}
-            className={`p-4 rounded-lg border-2 transition-all ${
+            className={`p-6 rounded-lg border-2 transition-all ${
               selectedOption === 'yes'
-                ? 'bg-green-600/20 border-green-500 text-green-400'
-                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                ? 'bg-green-600/20 border-green-500 text-green-400 shadow-lg shadow-green-500/20'
+                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600 hover:bg-gray-750'
             }`}
           >
-            <div className="text-2xl font-bold mb-1">YES</div>
-            <div className="text-sm">{market.yesPercent}% chance</div>
+            <div className="text-center">
+              <div className="text-3xl font-bold mb-1">YES</div>
+              <div className="text-lg font-semibold">{market.yesPercent}%</div>
+              <div className="text-xs text-gray-500 mt-1">Bet YES</div>
+            </div>
           </button>
           
           <button
             onClick={() => setSelectedOption('no')}
-            className={`p-4 rounded-lg border-2 transition-all ${
+            className={`p-6 rounded-lg border-2 transition-all ${
               selectedOption === 'no'
-                ? 'bg-red-600/20 border-red-500 text-red-400'
-                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600'
+                ? 'bg-red-600/20 border-red-500 text-red-400 shadow-lg shadow-red-500/20'
+                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600 hover:bg-gray-750'
             }`}
           >
-            <div className="text-2xl font-bold mb-1">NO</div>
-            <div className="text-sm">{market.noPercent}% chance</div>
+            <div className="text-center">
+              <div className="text-3xl font-bold mb-1">NO</div>
+              <div className="text-lg font-semibold">{market.noPercent}%</div>
+              <div className="text-xs text-gray-500 mt-1">Bet NO</div>
+            </div>
           </button>
         </div>
 
@@ -233,31 +451,103 @@ export default function MarketDetailPage() {
           </div>
         </div>
 
-        {/* Potential Return */}
-        {potentialReturn > 0 && (
+        {/* AC-003: Shares Preview and Calculator */}
+        {betAmount && parseFloat(betAmount) > 0 && selectedOption && (
           <div className="bg-blue-600/10 border border-blue-600/30 rounded-lg p-4 mb-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Potential Return</span>
-              <span className="text-xl font-bold text-blue-400">
-                {formatUSDC(potentialReturn)}
-              </span>
-            </div>
-            <div className="text-xs text-gray-500 mt-1">
-              If {selectedOption?.toUpperCase()} wins
+            <div className="space-y-3">
+              {/* AC-003: Preview of shares estimated */}
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400">Estimated Shares</span>
+                <span className="text-lg font-bold text-blue-400">
+                  ~{Math.round(parseFloat(betAmount) / (selectedOption === 'yes' ? (market.yesPercent / 100) : (market.noPercent / 100)))} shares
+                </span>
+              </div>
+              
+              {/* AC-003: Real-time potential winnings calculator */}
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400">Potential Return</span>
+                <span className="text-xl font-bold text-blue-400">
+                  {formatUSDC(potentialReturn)}
+                </span>
+              </div>
+              
+              <div className="text-xs text-gray-500">
+                If {selectedOption?.toUpperCase()} wins • ROI: +{Math.round(((potentialReturn - parseFloat(betAmount)) / parseFloat(betAmount)) * 100)}%
+              </div>
+              
+              {/* AC-003: Warning if pool is too small */}
+              {market.poolTotal < 10 && (
+                <div className="bg-yellow-600/10 border border-yellow-600/30 rounded p-2 mt-2">
+                  <div className="text-yellow-400 text-xs font-medium">
+                    ⚠️ Small pool warning: Market has less than $10 total
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
 
-        {/* Place Bet Button */}
+        {/* AC-003: Place Bet Button with disabled state for closed markets */}
         <button
-          disabled={!selectedOption || !betAmount || parseFloat(betAmount) <= 0}
-          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold py-4 rounded-lg transition-colors disabled:cursor-not-allowed"
+          disabled={!selectedOption || !betAmount || parseFloat(betAmount) <= 0 || market.status === 'closed' || market.status === 'resolved'}
+          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold py-4 rounded-lg transition-colors disabled:cursor-not-allowed text-lg"
         >
-          {!selectedOption ? 'Select YES or NO' : !betAmount ? 'Enter Amount' : 'Place Bet'}
+          {market.status === 'closed' || market.status === 'resolved' 
+            ? 'Market Closed' 
+            : !selectedOption 
+              ? 'Select YES or NO' 
+              : !betAmount 
+                ? 'Enter Amount' 
+                : `Place ${selectedOption?.toUpperCase()} Bet`
+          }
         </button>
+        
+        {/* AC-003: Warning message for closed markets */}
+        {(market.status === 'closed' || market.status === 'resolved') && (
+          <div className="mt-3 bg-red-600/10 border border-red-600/30 rounded-lg p-3">
+            <div className="text-red-400 text-sm font-medium">
+              ⚠️ This market is no longer accepting bets
+            </div>
+          </div>
+        )}
       </section>
 
-      {/* Market Info */}
+      {/* AC-004: Recent Activity */}
+      <section className="mb-6">
+        <h3 className="text-lg font-semibold text-white mb-3">Recent Activity</h3>
+        <div className="bg-gray-800 rounded-lg border border-gray-700">
+          {market.recentActivity.length > 0 ? (
+            <div className="divide-y divide-gray-700">
+              {market.recentActivity.map((activity, index) => (
+                <div key={index} className="p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-2 h-2 rounded-full ${
+                      activity.side === 'yes' ? 'bg-green-500' : 'bg-red-500'
+                    }`}></div>
+                    <div>
+                      <div className="text-white text-sm font-medium">
+                        {activity.side === 'yes' ? 'YES' : 'NO'} bet
+                      </div>
+                      <div className="text-gray-400 text-xs">
+                        {activity.user} • {formatTimeAgo(activity.timestamp)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-white font-bold">{formatUSDC(activity.amount)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="p-6 text-center text-gray-400">
+              No recent activity
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* AC-001: Market Information */}
       <section className="mb-6">
         <h3 className="text-lg font-semibold text-white mb-3">Market Information</h3>
         <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 space-y-3">
@@ -283,12 +573,20 @@ export default function MarketDetailPage() {
                market.status}
             </span>
           </div>
-          {market.createdBy && (
-            <div className="flex justify-between">
-              <span className="text-gray-400">Creator</span>
+          {/* AC-001: Creator address with copy button */}
+          <div className="flex justify-between items-center">
+            <span className="text-gray-400">Creator</span>
+            <div className="flex items-center gap-2">
               <span className="text-blue-400 font-mono text-sm">{market.createdBy}</span>
+              <button
+                onClick={() => copyToClipboard(market.createdBy)}
+                className="text-gray-400 hover:text-white transition-colors"
+                title="Copy address"
+              >
+                📋
+              </button>
             </div>
-          )}
+          </div>
         </div>
       </section>
     </MobileLayout>
