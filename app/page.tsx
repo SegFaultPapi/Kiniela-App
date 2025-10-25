@@ -4,8 +4,28 @@ import { MarketCarousel } from "@/components/market-carousel"
 import { TrendingCard } from "@/components/trending-card"
 import { MobileLayout } from "@/components/MobileLayout"
 import { sdk } from '@farcaster/miniapp-sdk'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
+import { sortByActivity } from "@/lib/market-utils"
+
+// KIN-002: Market type with complete data
+interface FeaturedMarket {
+  id: string
+  image: string
+  title: string
+  percentage: number
+  volume: string
+  playerName?: string
+  playerSubtext?: string
+  isTactical?: boolean
+  // KIN-002: Additional data for functionality
+  poolTotal: number
+  closesAt: string
+  lastBetAt: string
+  yesPercent: number
+  noPercent: number
+  category: string
+}
 
 export default function Home() {
   const router = useRouter()
@@ -15,39 +35,75 @@ export default function Home() {
     sdk.actions.ready()
   }, [])
 
-  const soccerMarkets = [
+  // KIN-002: Markets con datos completos pero manteniendo estructura visual
+  const soccerMarkets: FeaturedMarket[] = [
     {
+      id: "soccer-1",
       image: "/placeholder.svg?height=400&width=600",
       percentage: 68,
       title: "Real Madrid vs. FC Barcelona",
       volume: "12.5k",
       playerName: "OLINI NATOIAL",
       playerSubtext: "SAFFES ACCAN ASTIGBAL",
+      poolTotal: 12500,
+      closesAt: new Date(Date.now() + 5 * 60 * 60 * 1000).toISOString(),
+      lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      yesPercent: 68,
+      noPercent: 32,
+      category: "Sports",
     },
     {
+      id: "soccer-2",
       image: "/placeholder.svg?height=400&width=600",
       percentage: 72,
       title: "Man. United vs. Liverpool",
       volume: "10.1k",
       isTactical: true,
+      poolTotal: 10100,
+      closesAt: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
+      lastBetAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+      yesPercent: 72,
+      noPercent: 28,
+      category: "Sports",
     },
     {
+      id: "soccer-3",
       image: "/placeholder.svg?height=400&width=600",
       percentage: 65,
       title: "PSG vs. Bayern Munich",
       volume: "11.3k",
+      poolTotal: 11300,
+      closesAt: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
+      lastBetAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+      yesPercent: 65,
+      noPercent: 35,
+      category: "Sports",
     },
     {
+      id: "soccer-4",
       image: "/placeholder.svg?height=400&width=600",
       percentage: 58,
       title: "Chelsea vs. Arsenal",
       volume: "9.8k",
+      poolTotal: 9800,
+      closesAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      lastBetAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      yesPercent: 58,
+      noPercent: 42,
+      category: "Sports",
     },
     {
+      id: "soccer-5",
       image: "/placeholder.svg?height=400&width=600",
       percentage: 71,
       title: "Juventus vs. AC Milan",
       volume: "8.9k",
+      poolTotal: 8900,
+      closesAt: new Date(Date.now() + 18 * 60 * 60 * 1000).toISOString(),
+      lastBetAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      yesPercent: 71,
+      noPercent: 29,
+      category: "Sports",
     },
   ]
 
@@ -348,12 +404,31 @@ export default function Home() {
     },
   ]
 
+  // KIN-002 AC-001: Ordenar markets de soccer por actividad
+  const sortedSoccerMarkets = useMemo(() => {
+    return sortByActivity(soccerMarkets)
+  }, [])
+
   return (
     <MobileLayout showQuickActions={true} activeTab="featured">
       {/* Primary CTA Section - Keep visible near top */}
       <section className="mb-6">
         <h2 className="text-2xl font-bold text-white mb-4">Featured Markets</h2>
         <TrendingCard />
+      </section>
+
+      {/* KIN-002: Sports section with activity-based sorting */}
+      <section className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-white">⚽ Sports</h3>
+          <button 
+            onClick={() => router.push('/all-markets?category=sports')}
+            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
+          >
+            See All →
+          </button>
+        </div>
+        <MarketCarousel markets={sortedSoccerMarkets} />
       </section>
 
       {/* Markets Sections - Optimized spacing */}
@@ -407,19 +482,6 @@ export default function Home() {
           </button>
         </div>
         <MarketCarousel markets={entertainmentMarkets} />
-      </section>
-
-      <section className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-white">Soccer</h3>
-          <button 
-            onClick={() => router.push('/all-markets')}
-            className="text-blue-400 text-sm font-medium touch-target px-2 py-1 hover:text-blue-300 transition-colors"
-          >
-            See All →
-          </button>
-        </div>
-        <MarketCarousel markets={soccerMarkets} />
       </section>
 
       <section className="mb-6">

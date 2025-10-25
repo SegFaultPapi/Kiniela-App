@@ -1,92 +1,160 @@
 'use client'
 
 import { MobileLayout } from "@/components/MobileLayout"
-import { MarketCarousel } from "@/components/market-carousel"
-import { Search, Filter } from "lucide-react"
+import { MarketFeedCard } from "@/components/MarketFeedCard"
+import { Search, Filter, TrendingUp } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import { sortByActivity } from "@/lib/market-utils"
+
+// AC-002: Market type definition
+type MarketStatus = 'active' | 'closing_soon' | 'closed' | 'resolved'
+
+interface Market {
+  id: string
+  title: string
+  yesPercent: number
+  noPercent: number
+  poolTotal: number // USDC
+  closesAt: string // ISO timestamp
+  category: string
+  subcategory: string
+  lastBetAt: string // ISO timestamp
+  status: MarketStatus
+  image?: string // Imagen thumbnail
+}
 
 export default function AllMarkets() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
-  // Mock data for all markets with more details
-  const allMarkets = [
+  
+  // Mock data for all markets with complete information (AC-002)
+  const mockMarkets: Market[] = [
     {
-      image: "/placeholder.svg?height=400&width=600",
-      percentage: 68,
-      title: "Real Madrid vs. FC Barcelona",
-      volume: "12.5k",
-      playerName: "Sports",
-      playerSubtext: "Football",
-      isTactical: false
+      id: "1",
+      title: "¿Ganará Real Madrid vs. FC Barcelona?",
+      yesPercent: 68,
+      noPercent: 32,
+      poolTotal: 12500,
+      closesAt: new Date(Date.now() + 1.5 * 60 * 60 * 1000).toISOString(), // 1.5 horas
+      category: "Sports",
+      subcategory: "Football",
+      lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      status: 'closing_soon',
+      image: "/placeholder.svg?height=100&width=100"
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
-      percentage: 72,
-      title: "Man. United vs. Liverpool",
-      volume: "10.1k",
-      playerName: "Sports",
-      playerSubtext: "Football",
-      isTactical: false
+      id: "2",
+      title: "¿Man. United ganará contra Liverpool?",
+      yesPercent: 72,
+      noPercent: 28,
+      poolTotal: 10100,
+      closesAt: new Date(Date.now() + 5 * 60 * 60 * 1000).toISOString(),
+      category: "Sports",
+      subcategory: "Football",
+      lastBetAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+      status: 'active',
+      image: "/placeholder.svg?height=100&width=100"
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
-      percentage: 65,
-      title: "PSG vs. Bayern Munich",
-      volume: "11.3k",
-      playerName: "Sports",
-      playerSubtext: "Football",
-      isTactical: false
+      id: "3",
+      title: "¿PSG vencerá a Bayern Munich?",
+      yesPercent: 65,
+      noPercent: 35,
+      poolTotal: 11300,
+      closesAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      category: "Sports",
+      subcategory: "Football",
+      lastBetAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+      status: 'active',
+      image: "/placeholder.svg?height=100&width=100"
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
-      percentage: 58,
-      title: "Chelsea vs. Arsenal",
-      volume: "9.8k",
-      playerName: "Sports",
-      playerSubtext: "Football",
-      isTactical: false
+      id: "4",
+      title: "¿Chelsea derrotará a Arsenal?",
+      yesPercent: 58,
+      noPercent: 42,
+      poolTotal: 9800,
+      closesAt: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(),
+      category: "Sports",
+      subcategory: "Football",
+      lastBetAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      status: 'active',
+      image: "/placeholder.svg?height=100&width=100"
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
-      percentage: 71,
-      title: "Juventus vs. AC Milan",
-      volume: "8.9k",
-      playerName: "Sports",
-      playerSubtext: "Football",
-      isTactical: false
+      id: "5",
+      title: "¿Juventus ganará vs. AC Milan?",
+      yesPercent: 71,
+      noPercent: 29,
+      poolTotal: 8900,
+      closesAt: new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(),
+      category: "Sports",
+      subcategory: "Football",
+      lastBetAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      status: 'active',
+      image: "/placeholder.svg?height=100&width=100"
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
-      percentage: 62,
-      title: "Will Biden win 2024 election?",
-      volume: "18.5k",
-      playerName: "Politics",
-      playerSubtext: "Elections",
-      isTactical: true
+      id: "6",
+      title: "¿Ganará Biden las elecciones 2024?",
+      yesPercent: 62,
+      noPercent: 38,
+      poolTotal: 18500,
+      closesAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      category: "Politics",
+      subcategory: "Elections",
+      lastBetAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+      status: 'active',
+      image: "/placeholder.svg?height=100&width=100"
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
-      percentage: 67,
-      title: "S&P 500 reaches 6000 by year end?",
-      volume: "22.4k",
-      playerName: "Economy",
-      playerSubtext: "Stocks",
-      isTactical: false
+      id: "7",
+      title: "¿S&P 500 alcanzará 6000 este año?",
+      yesPercent: 67,
+      noPercent: 33,
+      poolTotal: 22400,
+      closesAt: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(),
+      category: "Economy",
+      subcategory: "Stocks",
+      lastBetAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+      status: 'active',
+      image: "/placeholder.svg?height=100&width=100"
     },
     {
-      image: "/placeholder.svg?height=400&width=600",
-      percentage: 76,
-      title: "GPT-5 launches in 2024?",
-      volume: "20.3k",
-      playerName: "Technology",
-      playerSubtext: "AI",
-      isTactical: true
+      id: "8",
+      title: "¿Se lanzará GPT-5 en 2024?",
+      yesPercent: 76,
+      noPercent: 24,
+      poolTotal: 20300,
+      closesAt: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
+      category: "Technology",
+      subcategory: "AI",
+      lastBetAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+      status: 'active',
+      image: "/placeholder.svg?height=100&width=100"
     },
   ]
 
+  // AC-001: Sort markets by activity
+  const sortedMarkets = useMemo(() => {
+    return sortByActivity(mockMarkets)
+  }, [])
+
+  // Filter markets based on search
+  const filteredMarkets = useMemo(() => {
+    if (!searchQuery) return sortedMarkets
+    
+    const query = searchQuery.toLowerCase()
+    return sortedMarkets.filter(market => 
+      market.title.toLowerCase().includes(query) ||
+      market.category.toLowerCase().includes(query) ||
+      market.subcategory.toLowerCase().includes(query)
+    )
+  }, [sortedMarkets, searchQuery])
+
   return (
-    <MobileLayout title="All Markets" activeTab="all-markets">
+    <MobileLayout title="All Markets" activeTab="markets">
       {/* Search and Filter Section */}
       <section className="mb-6">
         <div className="flex gap-3 mb-4">
@@ -106,42 +174,49 @@ export default function AllMarkets() {
         </div>
       </section>
 
-      {/* All Markets List */}
+      {/* All Markets List - AC-002: Market cards with key information */}
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-white">All Markets</h3>
-          <span className="text-sm text-gray-400">{allMarkets.length} markets</span>
+          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-blue-500" />
+            Active Markets
+          </h3>
+          <span className="text-sm text-gray-400">{filteredMarkets.length} markets</span>
         </div>
+        
         <div className="space-y-3">
-          {allMarkets.map((market, index) => (
-            <div key={index} className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:bg-gray-750 transition-colors">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="text-white font-medium text-sm line-clamp-2 flex-1 mr-3">{market.title}</h4>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">{market.volume}</span>
-                  <div className="w-12 h-6 bg-gray-700 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-medium text-white">{market.percentage}%</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs px-2 py-1 bg-blue-600/20 text-blue-400 rounded">{market.playerName}</span>
-                  <span className="text-xs text-gray-400">{market.playerSubtext}</span>
-                </div>
-                <button 
-                  onClick={() => router.push(`/market/${index}`)}
-                  className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
-                >
-                  View →
-                </button>
-              </div>
-            </div>
+          {filteredMarkets.map((market) => (
+            <MarketFeedCard
+              key={market.id}
+              id={market.id}
+              title={market.title}
+              yesPercent={market.yesPercent}
+              noPercent={market.noPercent}
+              poolTotal={market.poolTotal}
+              closesAt={market.closesAt}
+              category={market.category}
+              status={market.status}
+              image={market.image}
+              onClick={() => router.push(`/market/${market.id}`)}
+            />
           ))}
         </div>
+        
+        {/* Empty state */}
+        {filteredMarkets.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-400 mb-4">No markets found</p>
+            <button
+              onClick={() => setSearchQuery("")}
+              className="text-blue-400 hover:text-blue-300 text-sm"
+            >
+              Clear search
+            </button>
+          </div>
+        )}
       </section>
 
-      {/* Categories */}
+      {/* Categories - Keep as reference */}
       <section className="mb-6">
         <h3 className="text-lg font-semibold text-white mb-3">Categories</h3>
         <div className="grid grid-cols-2 gap-3">
@@ -150,28 +225,36 @@ export default function AllMarkets() {
             className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors"
           >
             <div className="text-white font-medium mb-1">⚽ Sports</div>
-            <div className="text-sm text-gray-400">45 markets</div>
+            <div className="text-sm text-gray-400">
+              {sortedMarkets.filter(m => m.category === "Sports").length} markets
+            </div>
           </button>
           <button 
             onClick={() => setSearchQuery("Politics")}
             className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors"
           >
             <div className="text-white font-medium mb-1">🏛️ Politics</div>
-            <div className="text-sm text-gray-400">23 markets</div>
+            <div className="text-sm text-gray-400">
+              {sortedMarkets.filter(m => m.category === "Politics").length} markets
+            </div>
           </button>
           <button 
             onClick={() => setSearchQuery("Economy")}
             className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors"
           >
             <div className="text-white font-medium mb-1">💰 Economy</div>
-            <div className="text-sm text-gray-400">18 markets</div>
+            <div className="text-sm text-gray-400">
+              {sortedMarkets.filter(m => m.category === "Economy").length} markets
+            </div>
           </button>
           <button 
             onClick={() => setSearchQuery("Technology")}
             className="touch-target bg-gray-800 border border-gray-700 rounded-lg p-4 text-left hover:bg-gray-700 transition-colors"
           >
             <div className="text-white font-medium mb-1">💻 Technology</div>
-            <div className="text-sm text-gray-400">12 markets</div>
+            <div className="text-sm text-gray-400">
+              {sortedMarkets.filter(m => m.category === "Technology").length} markets
+            </div>
           </button>
         </div>
       </section>
