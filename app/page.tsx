@@ -404,6 +404,11 @@ export default function Home() {
     },
   ]
 
+  // Handler para navegar a detalles del market
+  const handleMarketClick = (id: string) => {
+    router.push(`/market/${id}`)
+  }
+  
   // KIN-002 AC-001: Ordenar markets de soccer por actividad
   const sortedSoccerMarkets = useMemo(() => {
     return sortByActivity(soccerMarkets)
@@ -428,7 +433,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={sortedSoccerMarkets} />
+        <MarketCarousel markets={sortedSoccerMarkets} onMarketClick={handleMarketClick} />
       </section>
 
       {/* Markets Sections - Optimized spacing */}
@@ -442,7 +447,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={politicsMarkets} />
+        <MarketCarousel markets={politicsMarkets} onMarketClick={handleMarketClick} />
       </section>
 
       <section className="mb-6">
@@ -455,7 +460,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={economyMarkets} />
+        <MarketCarousel markets={economyMarkets} onMarketClick={handleMarketClick} />
       </section>
 
       <section className="mb-6">
@@ -468,7 +473,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={technologyMarkets} />
+        <MarketCarousel markets={technologyMarkets} onMarketClick={handleMarketClick} />
       </section>
 
       <section className="mb-6">
@@ -481,7 +486,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={entertainmentMarkets} />
+        <MarketCarousel markets={entertainmentMarkets} onMarketClick={handleMarketClick} />
       </section>
 
       <section className="mb-6">
@@ -494,7 +499,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={basketballMarkets} />
+        <MarketCarousel markets={basketballMarkets} onMarketClick={handleMarketClick} />
       </section>
 
       <section className="mb-6">
@@ -507,7 +512,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={tennisMarkets} />
+        <MarketCarousel markets={tennisMarkets} onMarketClick={handleMarketClick} />
       </section>
 
       <section className="mb-6">
@@ -520,7 +525,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={footballMarkets} />
+        <MarketCarousel markets={footballMarkets} onMarketClick={handleMarketClick} />
       </section>
 
       <section className="mb-6">
@@ -533,7 +538,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={baseballMarkets} />
+        <MarketCarousel markets={baseballMarkets} onMarketClick={handleMarketClick} />
       </section>
 
       <section className="mb-6">
@@ -546,7 +551,7 @@ export default function Home() {
             See All →
           </button>
         </div>
-        <MarketCarousel markets={hockeyMarkets} />
+        <MarketCarousel markets={hockeyMarkets} onMarketClick={handleMarketClick} />
       </section>
     </MobileLayout>
   )

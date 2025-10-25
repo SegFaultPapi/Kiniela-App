@@ -2,10 +2,13 @@
 
 import { MobileLayout } from "@/components/MobileLayout"
 import { MarketFeedCard } from "@/components/MarketFeedCard"
-import { Search, Filter, TrendingUp } from "lucide-react"
+import { MarketCardSkeletonList } from "@/components/MarketCardSkeleton"
+import { Search, Filter, TrendingUp, Loader2, RefreshCw } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { sortByActivity } from "@/lib/market-utils"
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll"
+import { usePullToRefresh } from "@/hooks/usePullToRefresh"
 
 // AC-002: Market type definition
 type MarketStatus = 'active' | 'closing_soon' | 'closed' | 'resolved'
@@ -27,6 +30,16 @@ interface Market {
 export default function AllMarkets() {
   const router = useRouter()
   const [searchQuery, setSearchQuery] = useState("")
+  
+  // AC-003: Pagination and loading states
+  const [displayedCount, setDisplayedCount] = useState(20) // Initial 20 markets
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [isInitialLoading, setIsInitialLoading] = useState(true)
+  
+  // Simulate initial loading
+  useState(() => {
+    setTimeout(() => setIsInitialLoading(false), 500)
+  })
   
   // Mock data for all markets with complete information (AC-002)
   const mockMarkets: Market[] = [
@@ -140,21 +153,95 @@ export default function AllMarkets() {
   const sortedMarkets = useMemo(() => {
     return sortByActivity(mockMarkets)
   }, [])
+  
+  // AC-003: Paginated markets display
+  const displayedMarkets = useMemo(() => {
+    return sortedMarkets.slice(0, displayedCount)
+  }, [sortedMarkets, displayedCount])
+  
+  const hasMore = displayedCount < sortedMarkets.length
 
-  // Filter markets based on search
+  // Filter markets based on search (use displayedMarkets for pagination)
   const filteredMarkets = useMemo(() => {
-    if (!searchQuery) return sortedMarkets
+    const marketsToFilter = searchQuery ? sortedMarkets : displayedMarkets
+    
+    if (!searchQuery) return marketsToFilter
     
     const query = searchQuery.toLowerCase()
-    return sortedMarkets.filter(market => 
+    return marketsToFilter.filter(market => 
       market.title.toLowerCase().includes(query) ||
       market.category.toLowerCase().includes(query) ||
       market.subcategory.toLowerCase().includes(query)
     )
-  }, [sortedMarkets, searchQuery])
+  }, [displayedMarkets, sortedMarkets, searchQuery])
+  
+  // AC-003: Load more handler
+  const handleLoadMore = useCallback(() => {
+    if (isLoadingMore || !hasMore) return
+    
+    setIsLoadingMore(true)
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      setDisplayedCount(prev => Math.min(prev + 20, sortedMarkets.length))
+      setIsLoadingMore(false)
+    }, 800)
+  }, [isLoadingMore, hasMore, sortedMarkets.length])
+  
+  // AC-003: Infinite scroll hook
+  const { loadMoreRef } = useInfiniteScroll({
+    onLoadMore: handleLoadMore,
+    hasMore: hasMore && !searchQuery, // Disable infinite scroll when searching
+    isLoading: isLoadingMore,
+    threshold: 300
+  })
+  
+  // AC-004: Pull-to-refresh handler
+  const handleRefresh = useCallback(async () => {
+    console.log('🔄 Refreshing markets...')
+    
+    // Simulate API refresh
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // Reset to initial state
+    setDisplayedCount(20)
+    setSearchQuery("")
+    
+    console.log('✅ Markets refreshed!')
+  }, [])
+  
+  // AC-004: Pull-to-refresh hook
+  const { pullDistance, isRefreshing } = usePullToRefresh({
+    onRefresh: handleRefresh,
+    threshold: 80,
+    resistance: 2.5
+  })
 
   return (
     <MobileLayout title="All Markets" activeTab="markets">
+      {/* AC-004: Pull-to-refresh indicator */}
+      {(pullDistance > 0 || isRefreshing) && (
+        <div 
+          className="fixed top-16 left-0 right-0 flex justify-center z-50 transition-all duration-200"
+          style={{ 
+            transform: `translateY(${Math.min(pullDistance, 80)}px)`,
+            opacity: Math.min(pullDistance / 80, 1)
+          }}
+        >
+          <div className="bg-gray-800 px-4 py-2 rounded-full shadow-lg border border-gray-700 flex items-center gap-2">
+            <RefreshCw 
+              className={`w-4 h-4 text-blue-400 ${isRefreshing ? 'animate-spin' : ''}`}
+              style={{ 
+                transform: `rotate(${pullDistance * 3}deg)` 
+              }}
+            />
+            <span className="text-sm text-white font-medium">
+              {isRefreshing ? 'Refreshing...' : pullDistance >= 80 ? 'Release to refresh' : 'Pull to refresh'}
+            </span>
+          </div>
+        </div>
+      )}
+      
       {/* Search and Filter Section */}
       <section className="mb-6">
         <div className="flex gap-3 mb-4">
@@ -181,38 +268,71 @@ export default function AllMarkets() {
             <TrendingUp className="w-5 h-5 text-blue-500" />
             Active Markets
           </h3>
-          <span className="text-sm text-gray-400">{filteredMarkets.length} markets</span>
+          <span className="text-sm text-gray-400">
+            {searchQuery ? filteredMarkets.length : displayedCount} 
+            {!searchQuery && sortedMarkets.length > displayedCount && ` of ${sortedMarkets.length}`}
+          </span>
         </div>
         
+        {/* AC-003: Initial Loading State */}
+        {isInitialLoading ? (
+          <MarketCardSkeletonList count={6} />
+        ) : (
+          <>
         <div className="space-y-3">
-          {filteredMarkets.map((market) => (
-            <MarketFeedCard
-              key={market.id}
-              id={market.id}
-              title={market.title}
-              yesPercent={market.yesPercent}
-              noPercent={market.noPercent}
-              poolTotal={market.poolTotal}
-              closesAt={market.closesAt}
-              category={market.category}
-              status={market.status}
-              image={market.image}
-              onClick={() => router.push(`/market/${market.id}`)}
-            />
-          ))}
-        </div>
-        
-        {/* Empty state */}
-        {filteredMarkets.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-400 mb-4">No markets found</p>
-            <button
-              onClick={() => setSearchQuery("")}
-              className="text-blue-400 hover:text-blue-300 text-sm"
-            >
-              Clear search
-            </button>
-          </div>
+              {filteredMarkets.map((market) => (
+                <MarketFeedCard
+                  key={market.id}
+                  id={market.id}
+                  title={market.title}
+                  yesPercent={market.yesPercent}
+                  noPercent={market.noPercent}
+                  poolTotal={market.poolTotal}
+                  closesAt={market.closesAt}
+                  category={market.category}
+                  status={market.status}
+                  image={market.image}
+                  onClick={() => router.push(`/market/${market.id}`)}
+                />
+              ))}
+                  </div>
+            
+            {/* AC-003: Loading more indicator */}
+            {isLoadingMore && (
+              <div className="mt-4">
+                <MarketCardSkeletonList count={3} />
+                </div>
+            )}
+            
+            {/* AC-003: Infinite scroll trigger */}
+            {hasMore && !searchQuery && !isLoadingMore && (
+              <div ref={loadMoreRef} className="h-20 flex items-center justify-center mt-4">
+                <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+              </div>
+            )}
+            
+            {/* End of list indicator */}
+            {!hasMore && !searchQuery && filteredMarkets.length > 0 && (
+              <div className="text-center py-6 text-gray-400 text-sm">
+                No more markets to load
+                </div>
+            )}
+            
+            {/* Empty state */}
+            {filteredMarkets.length === 0 && !isInitialLoading && (
+              <div className="text-center py-12">
+                <p className="text-gray-400 mb-4">No markets found</p>
+                {searchQuery && (
+                <button 
+                    onClick={() => setSearchQuery("")}
+                    className="text-blue-400 hover:text-blue-300 text-sm"
+                >
+                    Clear search
+                </button>
+                )}
+              </div>
+            )}
+          </>
         )}
       </section>
 

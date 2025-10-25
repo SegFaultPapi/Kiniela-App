@@ -11,6 +11,7 @@ interface MarketCardProps {
   playerName?: string
   playerSubtext?: string
   isTactical?: boolean
+  onClick?: () => void
 }
 
 export function MarketCard({
@@ -21,13 +22,17 @@ export function MarketCard({
   playerName,
   playerSubtext,
   isTactical,
+  onClick,
 }: MarketCardProps) {
   const [selectedVote, setSelectedVote] = useState<"yes" | "no" | null>(null)
   const [isBookmarked, setIsBookmarked] = useState(false)
 
   return (
     <div className="flex-shrink-0 w-[220px]">
-      <div className="relative rounded-xl overflow-hidden mb-2 aspect-[4/3] group">
+      <div 
+        className="relative rounded-xl overflow-hidden mb-2 aspect-[4/3] group cursor-pointer active:scale-95 transition-transform"
+        onClick={onClick}
+      >
         <img src={image || "/placeholder.svg"} alt={title} className="w-full h-full object-cover" />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
