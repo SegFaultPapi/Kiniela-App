@@ -52,6 +52,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
             chain={base}
             ensAddress="0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e"
             ensUniversalResolverAddress="0x8cab227b1162f03b8338331adaad7aadc83b895e"
+            smartWalletConfig={{
+              allowedAddresses: ["0x1615Ad56c1F19B2394cf36496F99A29D4E21932A"],
+              smartWalletOnly: false, // Permitir tanto Smart Wallets como wallets regulares
+            }}
           >
             {children}
           </OnchainKitProvider>

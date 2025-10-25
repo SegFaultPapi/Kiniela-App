@@ -19,7 +19,11 @@ export async function GET() {
       signature: "526mC3kixxVKw44XIjuZ/jYAlAaL3DQYPuLMEsr85iUlDntyTSJpq0V/eOXYWB2lQcMiJIeRREOhhLPCMeHhkxw="
     },
     baseBuilder: {
-      allowedAddresses: ["0x1615Ad56c1F19B2394cf36496F99A29D4E21932A"]
+      allowedAddresses: ["0x1615Ad56c1F19B2394cf36496F99A29D4E21932A"],
+      smartWalletOnly: false, // Permitir tanto Smart Wallets como wallets regulares
+      supportedChains: ["base"],
+      enableSmartWallet: true, // Habilitar Smart Wallets
+      enableRegularWallet: true, // Habilitar wallets regulares
     },
     miniapp: {
       version: "1",
