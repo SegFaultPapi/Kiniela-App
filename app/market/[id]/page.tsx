@@ -2,7 +2,7 @@
 
 import { MobileLayout } from "@/components/MobileLayout"
 import { useRouter, useParams } from "next/navigation"
-import { ArrowLeft, Clock, Users, TrendingUp, Share2 } from "lucide-react"
+import { ArrowLeft, Clock, Users, TrendingUp, Share2, Loader2, CheckCircle } from "lucide-react"
 import { formatUSDC, formatTimeRemaining, isClosingSoon } from "@/lib/market-utils"
 import { useState, useMemo } from "react"
 
@@ -180,6 +180,8 @@ export default function MarketDetailPage() {
   const [betAmount, setBetAmount] = useState("")
   const [selectedOption, setSelectedOption] = useState<'yes' | 'no' | null>(null)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
+  const [betState, setBetState] = useState<'idle' | 'pending' | 'success' | 'error'>('idle')
+  const [betError, setBetError] = useState<string | null>(null)
   
   // Get market data
   const market = MOCK_MARKETS[marketId] || MOCK_MARKETS["1"]
@@ -198,6 +200,32 @@ export default function MarketDetailPage() {
     const percent = selectedOption === 'yes' ? market.yesPercent : market.noPercent
     return (amount / percent) * 100
   }, [betAmount, selectedOption, market.yesPercent, market.noPercent])
+
+  // KIN-004: Handle bet placement
+  const handlePlaceBet = async () => {
+    if (!selectedOption || !betAmount || parseFloat(betAmount) <= 0) return
+    
+    setBetState('pending')
+    setBetError(null)
+    
+    try {
+      // Simulate transaction
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      setBetState('success')
+      
+      // Reset form after success
+      setTimeout(() => {
+        setSelectedOption(null)
+        setBetAmount('')
+        setBetState('idle')
+      }, 3000)
+      
+    } catch (err) {
+      setBetError('Transaction failed. Please try again.')
+      setBetState('error')
+    }
+  }
 
   return (
     <MobileLayout title="Market Details" activeTab="markets">
@@ -489,18 +517,32 @@ export default function MarketDetailPage() {
 
         {/* AC-003: Place Bet Button with disabled state for closed markets */}
         <button
-          disabled={!selectedOption || !betAmount || parseFloat(betAmount) <= 0 || market.status === 'closed' || market.status === 'resolved'}
-          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold py-4 rounded-lg transition-colors disabled:cursor-not-allowed text-lg"
+          onClick={handlePlaceBet}
+          disabled={!selectedOption || !betAmount || parseFloat(betAmount) <= 0 || market.status === 'closed' || market.status === 'resolved' || betState === 'pending'}
+          className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold py-4 rounded-lg transition-colors disabled:cursor-not-allowed text-lg flex items-center justify-center gap-2"
         >
-          {market.status === 'closed' || market.status === 'resolved' 
-            ? 'Market Closed' 
-            : !selectedOption 
-              ? 'Select YES or NO' 
-              : !betAmount 
-                ? 'Enter Amount' 
-                : `Place ${selectedOption?.toUpperCase()} Bet`
-          }
+          {betState === 'pending' && <Loader2 className="w-5 h-5 animate-spin" />}
+          {betState === 'success' && <CheckCircle className="w-5 h-5" />}
+          
+          {betState === 'pending' ? 'Submitting bet...' :
+           betState === 'success' ? 'Bet placed successfully!' :
+           market.status === 'closed' || market.status === 'resolved' 
+             ? 'Market Closed' 
+             : !selectedOption 
+               ? 'Select YES or NO' 
+               : !betAmount 
+                 ? 'Enter Amount' 
+                 : `Place ${selectedOption?.toUpperCase()} Bet`}
         </button>
+        
+        {/* AC-005: Error message */}
+        {betError && (
+          <div className="mt-3 bg-red-600/10 border border-red-600/30 rounded-lg p-3">
+            <div className="text-red-400 text-sm font-medium">
+              ⚠️ {betError}
+            </div>
+          </div>
+        )}
         
         {/* AC-003: Warning message for closed markets */}
         {(market.status === 'closed' || market.status === 'resolved') && (
