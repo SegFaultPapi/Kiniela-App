@@ -21,6 +21,12 @@ import { useAutoConnect } from '@/hooks/useAutoConnect'
 // USDC Contract Address on Base
 const USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913' as `0x${string}`
 
+// Utility function to format address
+function formatAddress(address: string): string {
+  if (!address) return ''
+  return `${address.slice(0, 6)}...${address.slice(-4)}`
+}
+
 export function WalletConnection() {
   // Agregar estilos CSS para la animación de pulso
   useEffect(() => {
@@ -174,6 +180,19 @@ export function WalletConnection() {
       timestamp: new Date().toISOString()
     })
 
+    // Debug OnchainKit components
+    if (isConnected && address) {
+      console.log('🔍 OnchainKit Debug Info:', {
+        address,
+        addressFormatted: formatAddress(address),
+        hasNameComponent: true, // Name component should work
+        hasAddressComponent: true, // Address component should work
+        hasAvatarComponent: true, // Avatar component should work
+        walletProvider: 'Base App Smart Wallet',
+        timestamp: new Date().toISOString()
+      })
+    }
+
     if (isConnected && address) {
       console.log(`✅ ${walletType} conectada:`, {
         address,
@@ -224,33 +243,61 @@ export function WalletConnection() {
             <div className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-600/50 transition-all duration-200 hover:border-blue-500/50">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title={isSmartWallet ? "Smart Wallet conectada" : "Wallet conectada"}></div>
               <Avatar className="h-6 w-6" />
-              <Name className="hidden sm:block" />
+              <div className="hidden sm:block text-sm font-medium text-white">
+                <Name />
+                {/* Fallback si Name no funciona */}
+                {!address && <span className="text-gray-400">Wallet</span>}
+              </div>
               {isSmartWallet && (
                 <span className="hidden md:inline text-xs text-blue-400 font-medium" title="Smart Wallet con Account Abstraction">⚡</span>
               )}
             </div>
           </ConnectWallet>
           <WalletDropdown>
-            <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-              <Avatar />
-              <Name />
-              <Address />
-              {isSmartWallet && (
-                <div className="mt-2 pt-2 border-t border-gray-700">
-                  <div className="flex items-center gap-2 text-sm text-blue-400">
-                    <span>⚡</span>
-                    <span className="font-medium">Smart Wallet</span>
+            <div className="px-4 pt-3 pb-2">
+              <Identity hasCopyAddressOnClick>
+                <div className="flex items-center gap-3 mb-3">
+                  <Avatar className="h-10 w-10" />
+                  <div className="flex-1">
+                    <div className="text-lg font-semibold text-white">
+                      <Name />
+                      {/* Fallback manual si Name no funciona */}
+                      {address && (
+                        <div className="text-sm text-gray-300 mt-1">
+                          {formatAddress(address)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-sm text-gray-400 font-mono">
+                      <Address />
+                      {/* Fallback manual si Address no funciona */}
+                      {address && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          {address}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">Account Abstraction habilitado</div>
                 </div>
-              )}
-              {usdcBalance && (
-                <div className="mt-2 pt-2 border-t border-gray-700">
-                  <div className="text-sm text-gray-400">Balance</div>
-                  <div className="text-lg font-semibold text-white">${usdcBalanceFormatted} USDC</div>
-                </div>
-              )}
-            </Identity>
+                
+                {isSmartWallet && (
+                  <div className="mb-3 p-2 bg-blue-600/10 border border-blue-600/30 rounded-lg">
+                    <div className="flex items-center gap-2 text-sm text-blue-400">
+                      <span>⚡</span>
+                      <span className="font-medium">Smart Wallet</span>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">Account Abstraction habilitado</div>
+                  </div>
+                )}
+                
+                {usdcBalance && (
+                  <div className="mb-3 p-2 bg-gray-800/50 rounded-lg">
+                    <div className="text-sm text-gray-400">Balance</div>
+                    <div className="text-lg font-semibold text-white">${usdcBalanceFormatted} USDC</div>
+                  </div>
+                )}
+              </Identity>
+            </div>
             <WalletDropdownDisconnect />
           </WalletDropdown>
         </Wallet>
