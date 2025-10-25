@@ -1,6 +1,7 @@
 'use client'
 
 import { useAccount, useDisconnect, useCapabilities, useBalance } from 'wagmi'
+import { base } from 'wagmi/chains'
 import React, { useEffect, useState } from 'react'
 import { 
   ConnectWallet,
@@ -102,14 +103,28 @@ export function WalletConnection() {
     detectBaseApp()
   }, [isMounted])
 
-  // Detectar capacidades de Base Account
+  // Detectar capacidades de Base Account (Smart Wallet)
   useEffect(() => {
     if (capabilities) {
       setBaseAccountCapabilities(capabilities)
+      
+      // Verificar si es una Smart Wallet
+      const isSmartWallet = Object.keys(capabilities).length > 0
+      const hasAtomicBatch = capabilities[base.id]?.atomicBatch?.supported
+      const hasPaymaster = capabilities[base.id]?.paymasterService?.supported
+      
       console.log('🔧 Base Account Capabilities:', {
         capabilities,
+        isSmartWallet,
+        hasAtomicBatch,
+        hasPaymaster,
+        chainId: base.id,
         timestamp: new Date().toISOString()
       })
+      
+      if (isSmartWallet) {
+        console.log('✅ Smart Wallet detectada correctamente!')
+      }
     }
   }, [capabilities])
 
@@ -129,30 +144,40 @@ export function WalletConnection() {
     }
   }, [isMounted, isConnected, isConnecting, address, isBaseApp, disconnect])
 
-  // Logs para verificar el estado de conexión
+  // Logs para verificar el estado de conexión y tipo de wallet
   useEffect(() => {
     if (!isMounted) return
+    
+    const walletType = baseAccountCapabilities ? 'Smart Wallet' : 'EOA/Regular Wallet'
+    const isSmartWallet = baseAccountCapabilities && Object.keys(baseAccountCapabilities).length > 0
     
     console.log('🔗 Base App Wallet Status:', {
       isConnected,
       isConnecting,
       address: address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'No address',
       isBaseApp,
+      walletType,
+      isSmartWallet,
       hasBaseAccountCapabilities: !!baseAccountCapabilities,
+      capabilitiesCount: baseAccountCapabilities ? Object.keys(baseAccountCapabilities).length : 0,
       timestamp: new Date().toISOString()
     })
 
     if (isConnected && address) {
-      console.log('✅ Base Account conectado:', {
+      console.log(`✅ ${walletType} conectada:`, {
         address,
         network: 'Base Network',
-        walletType: 'Base Account (Smart Wallet)',
+        walletType: isSmartWallet ? 'Base Smart Wallet (Account Abstraction)' : 'Regular Wallet (EOA)',
         capabilities: baseAccountCapabilities,
         autoConnected: isBaseApp,
+        features: {
+          atomicBatch: baseAccountCapabilities?.[base.id]?.atomicBatch?.supported || false,
+          paymasterService: baseAccountCapabilities?.[base.id]?.paymasterService?.supported || false,
+        },
         timestamp: new Date().toISOString()
       })
     } else if (!isConnected && !isConnecting) {
-      console.log('❌ Base Account desconectado')
+      console.log('❌ Wallet desconectada')
     }
   }, [isConnected, isConnecting, address, isBaseApp, baseAccountCapabilities, isMounted])
 
@@ -170,6 +195,8 @@ export function WalletConnection() {
     const usdcBalanceFormatted = usdcBalance 
       ? parseFloat(formatUnits(usdcBalance.value, usdcBalance.decimals)).toFixed(2)
       : '0.00'
+    
+    const isSmartWallet = Object.keys(baseAccountCapabilities).length > 0
 
     return (
       <div className="flex items-center gap-2">
@@ -184,9 +211,12 @@ export function WalletConnection() {
         <Wallet>
           <ConnectWallet>
             <div className="flex items-center gap-2 bg-gray-800/50 hover:bg-gray-700/50 px-3 py-2 rounded-lg border border-gray-600/50 transition-all duration-200 hover:border-blue-500/50">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" title={isSmartWallet ? "Smart Wallet conectada" : "Wallet conectada"}></div>
               <Avatar className="h-6 w-6" />
               <Name className="hidden sm:block" />
+              {isSmartWallet && (
+                <span className="hidden md:inline text-xs text-blue-400 font-medium" title="Smart Wallet con Account Abstraction">⚡</span>
+              )}
             </div>
           </ConnectWallet>
           <WalletDropdown>
@@ -194,6 +224,15 @@ export function WalletConnection() {
               <Avatar />
               <Name />
               <Address />
+              {isSmartWallet && (
+                <div className="mt-2 pt-2 border-t border-gray-700">
+                  <div className="flex items-center gap-2 text-sm text-blue-400">
+                    <span>⚡</span>
+                    <span className="font-medium">Smart Wallet</span>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">Account Abstraction habilitado</div>
+                </div>
+              )}
               {usdcBalance && (
                 <div className="mt-2 pt-2 border-t border-gray-700">
                   <div className="text-sm text-gray-400">Balance</div>

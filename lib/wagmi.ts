@@ -8,6 +8,8 @@ export const config = createConfig({
     coinbaseWallet({
       appName: 'Kiniela',
       appLogoUrl: '/icon.png',
+      preference: 'smartWalletOnly', // Priorizar Smart Wallets de Base
+      version: '4', // Usar versión 4 del SDK para Smart Wallets
     }),
   ],
   transports: {
