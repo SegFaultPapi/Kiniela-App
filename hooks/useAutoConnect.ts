@@ -31,23 +31,33 @@ export function useAutoConnect() {
       return
     }
 
-    // Detectar si estamos en Base App
+    // Detectar si estamos en Base App (detección más agresiva)
     const isBaseApp = typeof window !== 'undefined' && (
       // @ts-ignore - Base App ethereum provider
       window.ethereum?.isBaseApp ||
+      // Detectar por hostname (más específico)
       window.location.hostname.includes('base.org') || 
       window.location.hostname.includes('base.app') ||
+      window.location.hostname.includes('base.dev') ||
+      // Detectar por user agent
       window.navigator.userAgent.includes('Base') ||
-      // Detectar si estamos en un iframe de Base App
+      // Detectar si estamos en un iframe (Base App usa iframes)
       window.parent !== window ||
-      // Detectar Base App por referrer
+      // Detectar por referrer
       document.referrer.includes('base.org') ||
       document.referrer.includes('base.app') ||
+      document.referrer.includes('base.dev') ||
       // Detectar por URL parameters
       window.location.search.includes('base') ||
       // Detectar por localStorage/sessionStorage
       window.localStorage.getItem('baseApp') === 'true' ||
-      window.sessionStorage.getItem('baseApp') === 'true'
+      window.sessionStorage.getItem('baseApp') === 'true' ||
+      // Detectar por window.name (Base App puede usar esto)
+      window.name.includes('base') ||
+      // Detectar por document.title
+      document.title.includes('Base') ||
+      // Detectar por window.location.origin
+      window.location.origin.includes('base')
     )
 
     if (!isBaseApp) {
@@ -55,10 +65,13 @@ export function useAutoConnect() {
       console.log('🔍 Base App Detection Details:', {
         hasBaseProvider: !!(window as any).ethereum?.isBaseApp,
         hostname: window.location.hostname,
+        origin: window.location.origin,
         userAgent: window.navigator.userAgent,
         isIframe: window.parent !== window,
         referrer: document.referrer,
         search: window.location.search,
+        windowName: window.name,
+        documentTitle: document.title,
         localStorage: window.localStorage.getItem('baseApp'),
         sessionStorage: window.sessionStorage.getItem('baseApp'),
         ethereum: window.ethereum ? Object.keys(window.ethereum) : 'No ethereum'
@@ -90,10 +103,13 @@ export function useAutoConnect() {
     console.log('🔍 Base App Detection Details:', {
       hasBaseProvider: !!(window as any).ethereum?.isBaseApp,
       hostname: window.location.hostname,
+      origin: window.location.origin,
       userAgent: window.navigator.userAgent,
       isIframe: window.parent !== window,
       referrer: document.referrer,
       search: window.location.search,
+      windowName: window.name,
+      documentTitle: document.title,
       localStorage: window.localStorage.getItem('baseApp'),
       sessionStorage: window.sessionStorage.getItem('baseApp'),
       ethereum: window.ethereum ? Object.keys(window.ethereum) : 'No ethereum'

@@ -100,23 +100,33 @@ export function WalletConnection() {
     if (!isMounted) return
     
     const detectBaseApp = () => {
-      // Múltiples métodos de detección según KIN-001
+      // Detección más agresiva para Base App
       const isInBaseApp = typeof window !== 'undefined' && (
         // @ts-ignore - Base App ethereum provider
         window.ethereum?.isBaseApp ||
+        // Detectar por hostname (más específico)
         window.location.hostname.includes('base.org') || 
         window.location.hostname.includes('base.app') ||
+        window.location.hostname.includes('base.dev') ||
+        // Detectar por user agent
         window.navigator.userAgent.includes('Base') ||
-        // Detectar si estamos en un iframe de Base App
+        // Detectar si estamos en un iframe (Base App usa iframes)
         window.parent !== window ||
-        // Detectar Base App por referrer
+        // Detectar por referrer
         document.referrer.includes('base.org') ||
         document.referrer.includes('base.app') ||
+        document.referrer.includes('base.dev') ||
         // Detectar por URL parameters
         window.location.search.includes('base') ||
         // Detectar por localStorage/sessionStorage
         window.localStorage.getItem('baseApp') === 'true' ||
-        window.sessionStorage.getItem('baseApp') === 'true'
+        window.sessionStorage.getItem('baseApp') === 'true' ||
+        // Detectar por window.name (Base App puede usar esto)
+        window.name.includes('base') ||
+        // Detectar por document.title
+        document.title.includes('Base') ||
+        // Detectar por window.location.origin
+        window.location.origin.includes('base')
       )
       
       setIsBaseApp(isInBaseApp)
@@ -124,10 +134,13 @@ export function WalletConnection() {
         isInBaseApp,
         hasBaseProvider: !!(window as any).ethereum?.isBaseApp,
         hostname: window.location.hostname,
+        origin: window.location.origin,
         userAgent: window.navigator.userAgent,
         isIframe: window.parent !== window,
         referrer: document.referrer,
         search: window.location.search,
+        windowName: window.name,
+        documentTitle: document.title,
         localStorage: window.localStorage.getItem('baseApp'),
         sessionStorage: window.sessionStorage.getItem('baseApp'),
         ethereum: window.ethereum ? Object.keys(window.ethereum) : 'No ethereum'
@@ -135,6 +148,10 @@ export function WalletConnection() {
     }
 
     detectBaseApp()
+    
+    // Re-detectar cada 2 segundos para capturar cambios dinámicos
+    const interval = setInterval(detectBaseApp, 2000)
+    return () => clearInterval(interval)
   }, [isMounted])
 
   // Detectar capacidades de Base Account (Smart Wallet)
@@ -453,25 +470,6 @@ export function WalletConnection() {
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = '#0066FF';
-          }}
-          onClick={() => {
-            console.log('🔗 Connect Wallet Button Clicked:', {
-              isBaseApp,
-              isConnected,
-              isConnecting,
-              address,
-              hostname: window.location.hostname,
-              userAgent: window.navigator.userAgent,
-              ethereum: window.ethereum ? Object.keys(window.ethereum) : 'No ethereum',
-              timestamp: new Date().toISOString()
-            })
-            
-            // Forzar detección de Base App si no se detectó
-            if (!isBaseApp) {
-              console.log('🔧 Forcing Base App detection...')
-              window.sessionStorage.setItem('baseApp', 'true')
-              setIsBaseApp(true)
-            }
           }}
         >
           💼 Conectar
