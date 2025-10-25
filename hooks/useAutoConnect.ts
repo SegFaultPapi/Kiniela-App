@@ -37,11 +37,32 @@ export function useAutoConnect() {
       window.ethereum?.isBaseApp ||
       window.location.hostname.includes('base.org') || 
       window.location.hostname.includes('base.app') ||
-      window.navigator.userAgent.includes('Base')
+      window.navigator.userAgent.includes('Base') ||
+      // Detectar si estamos en un iframe de Base App
+      window.parent !== window ||
+      // Detectar Base App por referrer
+      document.referrer.includes('base.org') ||
+      document.referrer.includes('base.app') ||
+      // Detectar por URL parameters
+      window.location.search.includes('base') ||
+      // Detectar por localStorage/sessionStorage
+      window.localStorage.getItem('baseApp') === 'true' ||
+      window.sessionStorage.getItem('baseApp') === 'true'
     )
 
     if (!isBaseApp) {
       console.log('🔗 KIN-001 AC-002: Not in Base App, skipping auto-connect')
+      console.log('🔍 Base App Detection Details:', {
+        hasBaseProvider: !!(window as any).ethereum?.isBaseApp,
+        hostname: window.location.hostname,
+        userAgent: window.navigator.userAgent,
+        isIframe: window.parent !== window,
+        referrer: document.referrer,
+        search: window.location.search,
+        localStorage: window.localStorage.getItem('baseApp'),
+        sessionStorage: window.sessionStorage.getItem('baseApp'),
+        ethereum: window.ethereum ? Object.keys(window.ethereum) : 'No ethereum'
+      })
       
       // SECURITY: En desarrollo, limpiar conexiones no autorizadas SOLO en primera carga
       // NO limpiar en navegación entre páginas para mantener persistencia
@@ -64,6 +85,19 @@ export function useAutoConnect() {
       }
       return
     }
+
+    console.log('✅ KIN-001 AC-002: Base App detected, proceeding with auto-connect')
+    console.log('🔍 Base App Detection Details:', {
+      hasBaseProvider: !!(window as any).ethereum?.isBaseApp,
+      hostname: window.location.hostname,
+      userAgent: window.navigator.userAgent,
+      isIframe: window.parent !== window,
+      referrer: document.referrer,
+      search: window.location.search,
+      localStorage: window.localStorage.getItem('baseApp'),
+      sessionStorage: window.sessionStorage.getItem('baseApp'),
+      ethereum: window.ethereum ? Object.keys(window.ethereum) : 'No ethereum'
+    })
 
     // Buscar el conector de Coinbase Wallet (Base Account)
     const coinbaseConnector = connectors.find(

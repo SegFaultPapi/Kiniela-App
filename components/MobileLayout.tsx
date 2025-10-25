@@ -4,6 +4,7 @@ import { Star, List, User, PlusCircle } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { WalletConnection } from "@/components/wallet-connection"
+import { BaseAppDebug } from "@/components/BaseAppDebug"
 
 interface MobileLayoutProps {
   children: React.ReactNode
@@ -87,6 +88,9 @@ export function MobileLayout({
           </Link>
         </div>
       </nav>
+      
+      {/* Debug component for Base App */}
+      <BaseAppDebug />
     </div>
   )
 }

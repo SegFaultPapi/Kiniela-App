@@ -108,7 +108,15 @@ export function WalletConnection() {
         window.location.hostname.includes('base.app') ||
         window.navigator.userAgent.includes('Base') ||
         // Detectar si estamos en un iframe de Base App
-        window.parent !== window
+        window.parent !== window ||
+        // Detectar Base App por referrer
+        document.referrer.includes('base.org') ||
+        document.referrer.includes('base.app') ||
+        // Detectar por URL parameters
+        window.location.search.includes('base') ||
+        // Detectar por localStorage/sessionStorage
+        window.localStorage.getItem('baseApp') === 'true' ||
+        window.sessionStorage.getItem('baseApp') === 'true'
       )
       
       setIsBaseApp(isInBaseApp)
@@ -117,7 +125,12 @@ export function WalletConnection() {
         hasBaseProvider: !!(window as any).ethereum?.isBaseApp,
         hostname: window.location.hostname,
         userAgent: window.navigator.userAgent,
-        isIframe: window.parent !== window
+        isIframe: window.parent !== window,
+        referrer: document.referrer,
+        search: window.location.search,
+        localStorage: window.localStorage.getItem('baseApp'),
+        sessionStorage: window.sessionStorage.getItem('baseApp'),
+        ethereum: window.ethereum ? Object.keys(window.ethereum) : 'No ethereum'
       })
     }
 
@@ -440,6 +453,25 @@ export function WalletConnection() {
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = '#0066FF';
+          }}
+          onClick={() => {
+            console.log('🔗 Connect Wallet Button Clicked:', {
+              isBaseApp,
+              isConnected,
+              isConnecting,
+              address,
+              hostname: window.location.hostname,
+              userAgent: window.navigator.userAgent,
+              ethereum: window.ethereum ? Object.keys(window.ethereum) : 'No ethereum',
+              timestamp: new Date().toISOString()
+            })
+            
+            // Forzar detección de Base App si no se detectó
+            if (!isBaseApp) {
+              console.log('🔧 Forcing Base App detection...')
+              window.sessionStorage.setItem('baseApp', 'true')
+              setIsBaseApp(true)
+            }
           }}
         >
           💼 Conectar
