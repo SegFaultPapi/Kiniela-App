@@ -28,8 +28,8 @@ interface MarketDetail {
 const MOCK_MARKETS: Record<string, MarketDetail> = {
   "1": {
     id: "1",
-    title: "¿Ganará Real Madrid vs. FC Barcelona?",
-    description: "Predicción sobre el resultado del clásico español. El ganador será determinado por el resultado oficial al final del partido regular (90 minutos + tiempo añadido).",
+    title: "Will Real Madrid beat FC Barcelona?",
+    description: "Prediction about the outcome of the Spanish classic. The winner will be determined by the official result at the end of regular time (90 minutes + added time).",
     image: "/placeholder.svg?height=400&width=600",
     yesPercent: 68,
     noPercent: 32,
@@ -45,7 +45,7 @@ const MOCK_MARKETS: Record<string, MarketDetail> = {
   "soccer-1": {
     id: "soccer-1",
     title: "Real Madrid vs. FC Barcelona",
-    description: "Predicción sobre el resultado del clásico español. El ganador será determinado por el resultado oficial al final del partido regular.",
+    description: "Prediction about the outcome of the Spanish classic. The winner will be determined by the official result at the end of regular time.",
     image: "/placeholder.svg?height=400&width=600",
     yesPercent: 68,
     noPercent: 32,

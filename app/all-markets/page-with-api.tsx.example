@@ -1,0 +1,212 @@
+// KIN-002: All Markets Page - API-Ready Version
+// Este archivo muestra cómo usar el hook useMarketFeed con la API real
+// Para usar: renombrar a page.tsx y reemplazar el actual
+
+'use client'
+
+import { MobileLayout } from "@/components/MobileLayout"
+import { MarketFeedCard } from "@/components/MarketFeedCard"
+import { MarketCardSkeletonList } from "@/components/MarketCardSkeleton"
+import { Search, Filter, TrendingUp, Loader2, RefreshCw, AlertCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState, useMemo } from "react"
+import { sortByActivity } from "@/lib/market-utils"
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll"
+import { usePullToRefresh } from "@/hooks/usePullToRefresh"
+import { useMarketFeed } from "@/hooks/useMarketFeed"
+
+export default function AllMarketsWithAPI() {
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState("")
+  
+  // KIN-002: Use market feed hook with auto-refresh
+  const {
+    markets,
+    isLoading,
+    isLoadingMore,
+    error,
+    hasMore,
+    fetchMore,
+    refresh,
+    totalCount
+  } = useMarketFeed({
+    limit: 20,
+    sortBy: 'activity',
+    status: 'active',
+    refetchInterval: 30000 // Auto-refresh every 30s
+  })
+  
+  // AC-001: Sort markets by activity
+  const sortedMarkets = useMemo(() => {
+    return sortByActivity(markets)
+  }, [markets])
+  
+  // Filter markets based on search
+  const filteredMarkets = useMemo(() => {
+    if (!searchQuery) return sortedMarkets
+    
+    const query = searchQuery.toLowerCase()
+    return sortedMarkets.filter(market => 
+      market.title.toLowerCase().includes(query) ||
+      market.category.toLowerCase().includes(query) ||
+      market.subcategory?.toLowerCase().includes(query)
+    )
+  }, [sortedMarkets, searchQuery])
+  
+  // AC-003: Infinite scroll hook
+  const { loadMoreRef } = useInfiniteScroll({
+    onLoadMore: fetchMore,
+    hasMore: hasMore && !searchQuery,
+    isLoading: isLoadingMore,
+    threshold: 300
+  })
+  
+  // AC-004: Pull-to-refresh hook
+  const { pullDistance, isRefreshing } = usePullToRefresh({
+    onRefresh: refresh,
+    threshold: 80,
+    resistance: 2.5
+  })
+
+  return (
+    <MobileLayout title="All Markets" activeTab="markets">
+      {/* AC-004: Pull-to-refresh indicator */}
+      {(pullDistance > 0 || isRefreshing) && (
+        <div 
+          className="fixed top-16 left-0 right-0 flex justify-center z-50 transition-all duration-200"
+          style={{ 
+            transform: `translateY(${Math.min(pullDistance, 80)}px)`,
+            opacity: Math.min(pullDistance / 80, 1)
+          }}
+        >
+          <div className="bg-gray-800 px-4 py-2 rounded-full shadow-lg border border-gray-700 flex items-center gap-2">
+            <RefreshCw 
+              className={`w-4 h-4 text-blue-400 ${isRefreshing ? 'animate-spin' : ''}`}
+              style={{ 
+                transform: `rotate(${pullDistance * 3}deg)` 
+              }}
+            />
+            <span className="text-sm text-white font-medium">
+              {isRefreshing ? 'Refreshing...' : pullDistance >= 80 ? 'Release to refresh' : 'Pull to refresh'}
+            </span>
+          </div>
+        </div>
+      )}
+      
+      {/* AC-003: Error State */}
+      {error && (
+        <div className="mb-4 bg-red-900/20 border border-red-600/30 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-red-400 font-semibold mb-1">Error loading markets</h4>
+              <p className="text-red-300/80 text-sm mb-3">{error}</p>
+              <button
+                onClick={refresh}
+                className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Retry
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Search and Filter Section */}
+      <section className="mb-6">
+        <div className="flex gap-3 mb-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search markets..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <button className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 hover:bg-gray-700 transition-colors">
+            <Filter className="w-4 h-4 text-gray-400" />
+          </button>
+        </div>
+      </section>
+
+      {/* All Markets List */}
+      <section className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-blue-500" />
+            Active Markets
+          </h3>
+          <span className="text-sm text-gray-400">
+            {searchQuery ? filteredMarkets.length : markets.length}
+            {!searchQuery && totalCount > markets.length && ` of ${totalCount}`}
+          </span>
+        </div>
+        
+        {/* Initial Loading State */}
+        {isLoading ? (
+          <MarketCardSkeletonList count={6} />
+        ) : (
+          <>
+            <div className="space-y-3">
+              {filteredMarkets.map((market) => (
+                <MarketFeedCard
+                  key={market.id}
+                  id={market.id}
+                  title={market.title}
+                  yesPercent={market.yesPercent}
+                  noPercent={market.noPercent}
+                  poolTotal={market.poolTotal}
+                  closesAt={market.closesAt}
+                  category={market.category}
+                  status={market.status}
+                  image={market.image}
+                  onClick={() => router.push(`/market/${market.id}`)}
+                />
+              ))}
+            </div>
+            
+            {/* Loading more indicator */}
+            {isLoadingMore && (
+              <div className="mt-4">
+                <MarketCardSkeletonList count={3} />
+              </div>
+            )}
+            
+            {/* Infinite scroll trigger */}
+            {hasMore && !searchQuery && !isLoadingMore && (
+              <div ref={loadMoreRef} className="h-20 flex items-center justify-center mt-4">
+                <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
+              </div>
+            )}
+            
+            {/* End of list indicator */}
+            {!hasMore && !searchQuery && filteredMarkets.length > 0 && (
+              <div className="text-center py-6 text-gray-400 text-sm">
+                No more markets to load
+              </div>
+            )}
+            
+            {/* Empty state */}
+            {filteredMarkets.length === 0 && !isLoading && (
+              <div className="text-center py-12">
+                <p className="text-gray-400 mb-4">No markets found</p>
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="text-blue-400 hover:text-blue-300 text-sm"
+                  >
+                    Clear search
+                  </button>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </section>
+    </MobileLayout>
+  )
+}
+

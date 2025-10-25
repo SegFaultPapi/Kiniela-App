@@ -3,12 +3,13 @@
 import { MobileLayout } from "@/components/MobileLayout"
 import { MarketFeedCard } from "@/components/MarketFeedCard"
 import { MarketCardSkeletonList } from "@/components/MarketCardSkeleton"
-import { Search, Filter, TrendingUp, Loader2, RefreshCw } from "lucide-react"
+import { Search, Filter, TrendingUp, Loader2, RefreshCw, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState, useMemo, useCallback } from "react"
 import { sortByActivity } from "@/lib/market-utils"
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll"
 import { usePullToRefresh } from "@/hooks/usePullToRefresh"
+import { useMarketRealtimeUpdates, applyMarketUpdates } from "@/hooks/useMarketRealtimeUpdates"
 
 // AC-002: Market type definition
 type MarketStatus = 'active' | 'closing_soon' | 'closed' | 'resolved'
@@ -35,21 +36,24 @@ export default function AllMarkets() {
   const [displayedCount, setDisplayedCount] = useState(20) // Initial 20 markets
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [lastRefresh, setLastRefresh] = useState(Date.now())
+  const [liveMarkets, setLiveMarkets] = useState<Market[]>([])
   
-  // Simulate initial loading
+  // Simulate initial loading and initialize live markets
   useState(() => {
     setTimeout(() => setIsInitialLoading(false), 500)
   })
   
   // Mock data for all markets with complete information (AC-002)
-  const mockMarkets: Market[] = [
+  const initialMockMarkets: Market[] = [
     {
       id: "1",
-      title: "¿Ganará Real Madrid vs. FC Barcelona?",
+      title: "Will Real Madrid beat FC Barcelona?",
       yesPercent: 68,
       noPercent: 32,
       poolTotal: 12500,
-      closesAt: new Date(Date.now() + 1.5 * 60 * 60 * 1000).toISOString(), // 1.5 horas
+      closesAt: new Date(Date.now() + 1.5 * 60 * 60 * 1000).toISOString(),
       category: "Sports",
       subcategory: "Football",
       lastBetAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
@@ -58,7 +62,7 @@ export default function AllMarkets() {
     },
     {
       id: "2",
-      title: "¿Man. United ganará contra Liverpool?",
+      title: "Will Man. United beat Liverpool?",
       yesPercent: 72,
       noPercent: 28,
       poolTotal: 10100,
@@ -71,7 +75,7 @@ export default function AllMarkets() {
     },
     {
       id: "3",
-      title: "¿PSG vencerá a Bayern Munich?",
+      title: "Will PSG beat Bayern Munich?",
       yesPercent: 65,
       noPercent: 35,
       poolTotal: 11300,
@@ -84,7 +88,7 @@ export default function AllMarkets() {
     },
     {
       id: "4",
-      title: "¿Chelsea derrotará a Arsenal?",
+      title: "Will Chelsea beat Arsenal?",
       yesPercent: 58,
       noPercent: 42,
       poolTotal: 9800,
@@ -97,7 +101,7 @@ export default function AllMarkets() {
     },
     {
       id: "5",
-      title: "¿Juventus ganará vs. AC Milan?",
+      title: "Will Juventus beat AC Milan?",
       yesPercent: 71,
       noPercent: 29,
       poolTotal: 8900,
@@ -110,7 +114,7 @@ export default function AllMarkets() {
     },
     {
       id: "6",
-      title: "¿Ganará Biden las elecciones 2024?",
+      title: "Will Biden win the 2024 election?",
       yesPercent: 62,
       noPercent: 38,
       poolTotal: 18500,
@@ -123,7 +127,7 @@ export default function AllMarkets() {
     },
     {
       id: "7",
-      title: "¿S&P 500 alcanzará 6000 este año?",
+      title: "Will S&P 500 reach 6000 this year?",
       yesPercent: 67,
       noPercent: 33,
       poolTotal: 22400,
@@ -136,7 +140,7 @@ export default function AllMarkets() {
     },
     {
       id: "8",
-      title: "¿Se lanzará GPT-5 en 2024?",
+      title: "Will GPT-5 be released in 2024?",
       yesPercent: 76,
       noPercent: 24,
       poolTotal: 20300,
@@ -149,10 +153,27 @@ export default function AllMarkets() {
     },
   ]
 
+  // Use live markets if available, otherwise use initial mock data
+  const mockMarkets = liveMarkets.length > 0 ? liveMarkets : initialMockMarkets
+  
+  // Initialize live markets on first render
+  useState(() => {
+    if (liveMarkets.length === 0) {
+      setLiveMarkets(initialMockMarkets)
+    }
+  })
+  
+  // Real-time updates simulation (in production: WebSocket)
+  const handleMarketUpdates = useCallback((updates: any[]) => {
+    setLiveMarkets(current => applyMarketUpdates(current, updates))
+  }, [])
+  
+  useMarketRealtimeUpdates(mockMarkets, handleMarketUpdates, true)
+  
   // AC-001: Sort markets by activity
   const sortedMarkets = useMemo(() => {
     return sortByActivity(mockMarkets)
-  }, [])
+  }, [mockMarkets])
   
   // AC-003: Paginated markets display
   const displayedMarkets = useMemo(() => {
@@ -196,19 +217,46 @@ export default function AllMarkets() {
     threshold: 300
   })
   
-  // AC-004: Pull-to-refresh handler
+  // AC-001 & AC-004: Refresh handler (manual y automático)
   const handleRefresh = useCallback(async () => {
     console.log('🔄 Refreshing markets...')
     
-    // Simulate API refresh
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // Reset to initial state
-    setDisplayedCount(20)
-    setSearchQuery("")
-    
-    console.log('✅ Markets refreshed!')
+    try {
+      setError(null)
+      
+      // Simulate API refresh (en producción: await fetchMarkets())
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Simulate occasional errors (10% chance)
+          if (Math.random() < 0.1) {
+            reject(new Error('Network error'))
+          } else {
+            resolve(true)
+          }
+        }, 1000)
+      })
+      
+      // Reset to initial state
+      setDisplayedCount(20)
+      setSearchQuery("")
+      setLastRefresh(Date.now())
+      
+      console.log('✅ Markets refreshed!')
+    } catch (err) {
+      console.error('❌ Refresh failed:', err)
+      setError('Failed to refresh markets. Please try again.')
+    }
   }, [])
+  
+  // AC-001: Auto-refresh cada 30s
+  useState(() => {
+    const intervalId = setInterval(() => {
+      console.log('⏰ Auto-refreshing markets...')
+      handleRefresh()
+    }, 30000) // 30 seconds
+    
+    return () => clearInterval(intervalId)
+  })
   
   // AC-004: Pull-to-refresh hook
   const { pullDistance, isRefreshing } = usePullToRefresh({
@@ -238,6 +286,29 @@ export default function AllMarkets() {
             <span className="text-sm text-white font-medium">
               {isRefreshing ? 'Refreshing...' : pullDistance >= 80 ? 'Release to refresh' : 'Pull to refresh'}
             </span>
+          </div>
+        </div>
+      )}
+      
+      {/* AC-003: Error State */}
+      {error && (
+        <div className="mb-4 bg-red-900/20 border border-red-600/30 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-red-400 font-semibold mb-1">Error loading markets</h4>
+              <p className="text-red-300/80 text-sm mb-3">{error}</p>
+              <button
+                onClick={() => {
+                  setError(null)
+                  handleRefresh()
+                }}
+                className="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Retry
+              </button>
+            </div>
           </div>
         </div>
       )}

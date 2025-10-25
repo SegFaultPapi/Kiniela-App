@@ -59,7 +59,7 @@ export function MarketFeedCard({
       {/* Odds Visualization - AC-002: YES/NO percentages with progress bar */}
       <div className="mb-3">
         <div className="flex items-center justify-between text-sm mb-1">
-          <span className="text-green-400 font-medium">SÍ {yesPercent}%</span>
+          <span className="text-green-400 font-medium">YES {yesPercent}%</span>
           <span className="text-red-400 font-medium">NO {noPercent}%</span>
         </div>
         <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden flex">
@@ -102,7 +102,7 @@ export function MarketFeedCard({
           {isClosing && (
             <div className="mt-2 pt-2 border-t border-yellow-600/30">
               <div className="flex items-center gap-2 text-yellow-400">
-                <span className="text-xs font-medium">⚠️ Cerrando pronto</span>
+                <span className="text-xs font-medium">⚠️ Closing soon</span>
               </div>
             </div>
           )}
