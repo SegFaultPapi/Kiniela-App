@@ -12,7 +12,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5, // 5 minutes
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: true, // AC-002: Refrescar al volver a la app
+        refetchInterval: 30000, // Actualizar datos cada 30 segundos
       },
     },
   }))

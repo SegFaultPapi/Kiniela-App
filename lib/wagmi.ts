@@ -16,6 +16,9 @@ export const config = createConfig({
     [base.id]: http(),
     [baseSepolia.id]: http(),
   },
+  // AC-002: Persistencia de conexión entre sesiones
+  ssr: true, // Enable server-side rendering support
+  storage: typeof window !== 'undefined' ? window.localStorage : undefined,
 })
 
 declare module 'wagmi' {

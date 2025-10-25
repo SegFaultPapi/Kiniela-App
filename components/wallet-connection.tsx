@@ -58,10 +58,14 @@ export function WalletConnection() {
     address: address,
   })
 
-  // Get USDC balance
+  // Get USDC balance - AC-002: Balance actualizado en tiempo real
   const { data: usdcBalance } = useBalance({
     address: address,
     token: USDC_ADDRESS,
+    query: {
+      refetchInterval: 10000, // Actualizar cada 10 segundos
+      enabled: !!address && isConnected, // Solo consultar si está conectado
+    }
   })
 
   // Prevent hydration mismatch
