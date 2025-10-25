@@ -18,6 +18,7 @@ export const config = createConfig({
   },
   // AC-002: Persistencia de conexión entre sesiones
   ssr: true, // Enable server-side rendering support
+  storage: undefined,
 })
 
 declare module 'wagmi' {

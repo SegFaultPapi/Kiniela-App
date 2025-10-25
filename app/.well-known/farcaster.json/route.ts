@@ -24,12 +24,13 @@ export async function GET() {
       supportedChains: ["base"],
       enableSmartWallet: true,
       enableRegularWallet: true,
-      enablePasskey: true, // Habilitar passkeys para Smart Wallets
-      smartWalletConfig: {
-        enableAccountAbstraction: true,
-        enablePaymaster: true,
-        enableBatchTransactions: true,
-      },
+      // Configuración específica para Base App Smart Wallets
+      baseAppConfig: {
+        enableSmartWallet: true,
+        enableRegularWallet: true,
+        smartWalletPreferred: true,
+        supportedWalletTypes: ["smartWallet", "regularWallet"],
+      }
     },
     miniapp: {
       version: "1",
